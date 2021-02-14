@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block title %} Add Event {% endblock %}
+
+{% block content %}
+    <h1>Add an Event:</h1>
+    <div id="form_container">
+        <form name="events" id="events" method="post" action="">
+            <label for="eventname">Event name</label>
+            <br>
+            <input type="text" id="eventname" name="eventname">
+            <br>
+            <label for="desc">Description</label>
+            <br>
+            <input type="text" id="desc" name="desc">
+            <br>
+            <label for="datetime"> Date and Time</label>
+            <br>
+            <input type="datetime-local" id="datetime" name="datetime">
+            <br>
+            <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
+        </form>
+    </div>
+
+<script>
+function update() {
+  alert("hello");
+
+}
+</script>
+{% endblock %}
