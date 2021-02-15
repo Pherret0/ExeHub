@@ -12,7 +12,14 @@
 </head>
     <body>
     <div id="header">
-        <img src="static/exehubapp/img/exehublogo1.png" style="height: 20%; width: 20%">
+        <img src="{% static 'exehubapp/img/exehublogo1.png' %}" style="height: 20%; width: 20%">
+        <div id="navbar">
+            {% block navbar %}
+                <a href="/">Home</a>
+                <a href="/addevent">Make a New Event</a>
+                <a href="/events">All Events</a>
+            {% endblock %}
+        </div>
     </div>
     <div id="content">
         {% block content %}
