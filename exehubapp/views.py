@@ -16,6 +16,10 @@ def index(request):
 def addEvent(request):
     return render(request, 'addevent.html')
 
+@csrf_exempt
+def createGroup(request):
+    return render(request, 'creategroup.html')
+
 
 @csrf_exempt
 def createEvent(request):

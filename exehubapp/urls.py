@@ -8,5 +8,6 @@ urlpatterns = [
     path('addevent/create/', views.createEvent, name='createEvent'),
     path('events/', views.viewAllEvents, name='events'),
     path('events/<int:event_id>', views.viewEventDetails, name='event'),
+    path('creategroup/', views.createGroup, name='creategroup'),
 
 ]

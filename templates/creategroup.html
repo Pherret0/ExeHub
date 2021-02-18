@@ -1,0 +1,23 @@
+<!-- Created by James -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/addevent.js' %}"></script>
+{% endblock %}
+
+{% block title %} Create Group {% endblock %}
+
+{% block content %}
+    <h1>Create Group:</h1>
+    <div id="form_container">
+        <form name="groups" id="groups" method="post" action="">
+            <label for="groupname">Group Name</label>
+            <br>
+            <input type="text" id="groupname" name="groupname">
+            <br>
+            <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
+        </form>
+    </div>
+
+{% endblock %}
