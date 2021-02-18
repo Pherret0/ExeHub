@@ -11,12 +11,14 @@ from exehubapp.models import *
 def index(request):
     return render(request, 'index.html')
 
+
 @csrf_exempt
 def addEvent(request):
     return render(request, 'addevent.html')
 
+
 @csrf_exempt
-def createEvent (request):
+def createEvent(request):
     """
     Currently a test function- final functionality should NOT look like this
     Currently creates a brand new group (which is hardcoded) so that the group can be passed to the event
@@ -30,7 +32,7 @@ def createEvent (request):
     group_irc = '696969'
     fee = '6969696'
     record = group = Group(group_name=group_name, group_owner=group_owner, group_email=group_email, group_irc=group_irc,
-                  fee=fee)
+                           fee=fee)
     record.save()
 
     print("Hello")
@@ -49,6 +51,13 @@ def createEvent (request):
     record.save()
     return HttpResponse("success!")
 
-def viewEvents(request):
-    return render(request, 'events.html')
 
+def viewAllEvents(request):
+    return render(request, 'showevents.html')
+
+
+def viewEventDetails(request, event_id):
+    context = {
+        'event_id': event_id,
+    }
+    return render(request, 'event.html', context)

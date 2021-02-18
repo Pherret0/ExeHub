@@ -1,3 +1,4 @@
+<!-- Created By Jack -->
 {% extends "base.html" %}
 {% load static %}
 
@@ -15,22 +16,39 @@
             <br>
             <input type="text" id="eventname" name="eventname">
             <br>
-            <label for="desc">Description</label>
+
+            <label for="start">Start Time</label>
             <br>
-            <input type="text" id="desc" name="desc">
+            <input type="datetime-local" id="start" name="start">
             <br>
-            <label for="datetime"> Date and Time</label>
+
+            <label for="end">End Time</label>
             <br>
-            <input type="datetime-local" id="datetime" name="datetime">
+            <input type="datetime-local" id="end" name="end">
             <br>
+
+            <label for="location">Location</label>
+            <br>
+            <input type="text" id="location" name="location">
+            <br>
+
+            <label for="description">Description</label>
+            <br>
+            <input type="text" id="description" name="description">
+            <br>
+
+            <label for="attendees_min">Minimum number of attendees</label>
+            <br>
+            <input type="number" id="attendees_min" name="attendees_min">
+            <br>
+
+            <label for="attendees_max">Maximum number of attendees</label>
+            <br>
+            <input type="number" id="attendees_max" name="attendees_max">
+            <br>
+
             <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
         </form>
     </div>
 
-<script>
-function update() {
-  alert("hello");
-
-}
-</script>
 {% endblock %}
