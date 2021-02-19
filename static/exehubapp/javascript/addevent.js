@@ -1,3 +1,4 @@
+<!-- Created By Travis -->
 $(document).ready(function(){
     $('#events').submit(function (e) {
         alert("Sending...")
