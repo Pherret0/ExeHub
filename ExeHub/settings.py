@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'ExeHub.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': 'ehdb',
         'USER': 'interact',
         'PASSWORD': 'UseMeDaddy',
