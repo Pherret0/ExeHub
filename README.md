@@ -12,6 +12,10 @@ python -m django --version
 
 If Django has successfully been installed, you should see the version of Django installed. 
 
+The MySQL server will also need to be running while accessing the web app locally. Ensure that mysql-connector-python is installed using the following command:
+
+pip install mysql-connector-python
+
 #Run the Project:
 To start the Django development server and run the web app, run the following command:
 
