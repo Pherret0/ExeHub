@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from exehubapp.models import *
+from django.db import connection
 
 
 # Create your views here.
@@ -16,6 +17,7 @@ def index(request):
 def addEvent(request):
     return render(request, 'addevent.html')
 
+
 @csrf_exempt
 def createGroup(request):
     return render(request, 'creategroup.html')
@@ -25,43 +27,70 @@ def createGroup(request):
 def createEvent(request):
     """
     Currently a test function- final functionality should NOT look like this
-    Currently creates a brand new group (which is hardcoded) so that the group can be passed to the event
-    Event attributes are also hardcoded and must be taken from the POST request after the addevent page is created
-        properly to reflect the database.
-
+    Currently creates a new group if one does not already exist (which is hardcoded), which can be used as the
+    group attribute for the event. Takes values from HTML form for creating event and saves to db.
+    NOTE: Event group will correspond to the correct group when this is set up.
+    NOTE: Owner will correspond to the user logged in, once this is set up.
     """
-    group_name = 'Big Trucks big bucks'
-    group_owner = 'Dave'
-    group_email = 'Dave@hotmail.com'
-    group_irc = '696969'
-    fee = '6969696'
-    record = group = Group(group_name=group_name, group_owner=group_owner, group_email=group_email, group_irc=group_irc,
-                           fee=fee)
-    record.save()
 
-    print("Hello")
-    name = request.POST.get('eventname')
-    owner = 'me'
-    group = group
-    start_date_time = '2020-12-05 12:12:12'
-    end_date_time = '2021-12-12 12:12:12'
-    location = 'london'
-    description = request.POST.get('desc')
-    min_attendees = 0
-    max_attendees = 1
-    record = Event(name=name, description=description, owner=owner, group=group, start_date_time=start_date_time,
-                   end_date_time=end_date_time, location=location, min_attendees=min_attendees,
-                   max_attendees=max_attendees)
+    try:
+        group = ExehubappGroup.objects.get(group_id=1)
+    except:
+        group_name = 'Test Group'
+        group_owner = 'Test'
+        group_email = 'Test@hotmail.com'
+        group_irc = '696969'
+        fee = '6969696'
+        group_record = group = ExehubappGroup(group_name=group_name, group_owner=group_owner, group_email=group_email,
+                                        group_irc=group_irc, fee=fee)
+        group_record.save()
+
+    # Get user input from HTML form
+    name = request.POST.get('event_name')
+    owner = request.POST.get('owner')
+    start = '2020-12-05 12:12:12'
+    end = '2021-12-12 12:12:12'
+    location = request.POST.get('location')
+    description = request.POST.get('description')
+    min_attendees = request.POST.get('attendees_min')
+    max_attendees = request.POST.get('attendees_max')
+    record = ExehubappEvent(event_name=name, description=description, event_owner=owner, group=group, start=start,
+                            end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
     record.save()
-    return HttpResponse("success!")
+    return HttpResponse("Success!")
 
 
 def viewAllEvents(request):
-    return render(request, 'showevents.html')
+    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM events")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+    return render(request, 'showevents.html', context)
 
 
 def viewEventDetails(request, event_id):
-    context = {
-        'event_id': event_id,
-    }
+    # Select the event from the events table with corresponding event_id and pass to the event template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM events WHERE event_id=%s", (event_id,))
+        row = cursor.fetchone()
+        if not row:
+            # If there is no event with the event_id specified, redirect to the home page.
+            return render(request, 'index.html')
+
+        context = {
+            'data': row
+        }
+        print(row)
     return render(request, 'event.html', context)
+
+
+def dictfetchall(cursor):
+    # Returns all rows from a cursor as a dictionary
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]

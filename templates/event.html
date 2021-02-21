@@ -8,14 +8,33 @@
 {% block title %} View Event {% endblock %}
 
 {% block content %}
-    <h1>You are viewing event {{ event_id }}. </h1>
+    <h1>You are viewing event {{ data.0 }}. </h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Location</th>
+            <th>Minimum Attendees</th>
+            <th>Maximum Attendees</th>
+            <th>Description</th>
 
-    <h6>Name:</h6>
-    <h6>Start:</h6>
-    <h6>End:</h6>
-    <h6>Location:</h6>
-    <h6>Description:</h6>
-    <h6>Attendees Min:</h6>
-    <h6>Attendees Max:</h6>
 
+        </tr>
+       <tr>
+            <th>  {{ data.0 }}  </th>
+            <th>  {{ data.1 }}  </th>
+            <th>  {{ data.2 }}  </th>
+            <th>  {{ data.4 }}  </th>
+            <th>  {{ data.5 }}  </th>
+            <th>  {{ data.6 }}  </th>
+            <th>  {{ data.8 }}  </th>
+            <th>  {{ data.9 }}  </th>
+            <th>  {{ data.7 }}  </th>
+
+
+       </tr>
+    </table>
 {% endblock %}

@@ -8,6 +8,26 @@
 {% block title %} View Event {% endblock %}
 
 {% block content %}
-    <h1>Events: </h1>
+    <h1>Events</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Starting Time</th>
+            <th>Location</th>
+            <th></th>
+        </tr>
+
+        {% for row in data %}
+            <tr>
+               <th> {{ row.event_id }} </th>
+               <th> {{ row.event_name }}</th>
+               <th> {{ row.start }} </th>
+               <th> {{ row.location }} </th>
+               <th><a href="/events/{{ row.event_id }}">More Details</a></th>
+           </tr>
+
+        {% endfor %}
+    </table>
 
 {% endblock %}
