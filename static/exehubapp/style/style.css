@@ -6,12 +6,16 @@ html{
 body{
     margin: 0;
     text-align: center;
-    display: block;
     background-color: aliceblue;
     font-size: 20px;
     font-family: Arial, Helvetica, sans-serif;
     min-height: 100%;
     width: 100%;
+}
+
+#content{
+    justify-content: center;
+    display: flex;
 }
 
 #logo{

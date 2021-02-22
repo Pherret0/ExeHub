@@ -1,0 +1,30 @@
+#content{
+    display: block;
+}
+
+#form_container{
+    display: flex;
+    height: auto;
+    flex-flow: column wrap;
+    font-size: 1em;
+    width: 100%;
+}
+
+input:hover, input:focus {
+    opacity: 100%;
+    background-color: white;
+    width: 35%;
+    color: black;
+ }
+
+input{
+    background-color: rgb(0, 0, 0);
+    width: 30%;
+    opacity: 50%;
+    font-size: 1em;
+    margin: 0.5%;
+    border: solid black 2px;
+    border-radius: 5px;
+    transition-duration: 0.8s;
+    color: white;
+}
