@@ -3,16 +3,34 @@
 {% load static %}
 
 {% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/feed.css' %}">
 {% endblock %}
 
 {% block title %} Welcome to ExeHub {% endblock %}
 
 {% block content %}
-    ExeHub Home Page
-    <br>
-    Website Under Construction
-    <br>
-    Please accept this cat for now
-    <br>
-    <img src="https://media.wired.com/photos/5cdefb92b86e041493d389df/master/pass/Culture-Grumpy-Cat-487386121.jpg" style="width:500px;height: 500px">
+    <div id="feed">
+        {% for i in data %}
+            <div class="post">
+                <div class="post_content">
+                    <img src="https://media.wired.com/photos/5cdefb92b86e041493d389df/master/pass/Culture-Grumpy-Cat-487386121.jpg">
+                    <p>{{ i }}</p>
+                </div>
+                <div class="post_comments">
+                    <div class="view_comments">
+                        <ul>
+                            <li>Wow what a cool prototype post!</li>
+                            <li> Why yes i agree, its really good</li>
+                            <li>I do not like the prototype</li>
+                            <li>Shut up</li>
+                        </ul>
+                    </div>
+                    <div class="add_comment">
+                        Post a comment
+                        <input type="text" id="add_comment_input" name="add_comment_input">
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

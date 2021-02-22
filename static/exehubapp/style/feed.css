@@ -1,0 +1,39 @@
+
+#feed{
+    display: flex;
+    height: auto;
+    flex-flow: column wrap;
+    width: 40%;
+}
+.post {
+    display: flex;
+    flex-flow: column wrap;
+    background-color: white;
+    margin: 3%;
+    min-height: 600px;
+    border: 2px solid black;
+}
+
+img{
+    object-fit: cover;
+    max-width:100%;
+    max-height:100%;
+}
+
+.post_content{
+    border-bottom: 1px solid black;
+    flex-grow: 2;
+}
+.post_comments{
+    display: flex;
+    flex-flow: column wrap;
+    background-color: lightgray;
+    flex-grow: 1;
+}
+.view_comments{
+    border-bottom: 1px solid gray;
+    flex-grow: 2;
+}
+.add_comment{
+    flex-grow: 1;
+}
