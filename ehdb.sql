@@ -38,6 +38,7 @@ CREATE TABLE `attendees` (
 
 LOCK TABLES `attendees` WRITE;
 /*!40000 ALTER TABLE `attendees` DISABLE KEYS */;
+INSERT INTO `attendees` VALUES (1,1),(2,1),(1,2);
 /*!40000 ALTER TABLE `attendees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +64,7 @@ CREATE TABLE `events` (
   UNIQUE KEY `event_id` (`event_id`),
   KEY `group_id` (`group_id`),
   CONSTRAINT `events_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,6 +73,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
+INSERT INTO `events` VALUES (1,'Welcome to Exeter',NULL,1,'2021-09-21 11:00:00',NULL,NULL,NULL,NULL,NULL),(2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15);
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -99,6 +101,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
+INSERT INTO `members` VALUES (1,1,1),(2,1,0),(2,2,1);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +124,7 @@ CREATE TABLE `uni_groups` (
   UNIQUE KEY `group_name` (`group_name`),
   UNIQUE KEY `group_email` (`group_email`),
   UNIQUE KEY `group_irc` (`group_irc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,6 +133,7 @@ CREATE TABLE `uni_groups` (
 
 LOCK TABLES `uni_groups` WRITE;
 /*!40000 ALTER TABLE `uni_groups` DISABLE KEYS */;
+INSERT INTO `uni_groups` VALUES (1,'Biscuit Soc','Steve Smith','yum@example.com','UoEBiscuits',9250.00),(2,'Computer Science Department','Ronaldo Menezes','compsci@example.com','Computer Science',0.00);
 /*!40000 ALTER TABLE `uni_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +155,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id` (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,6 +164,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary '\ÈßTÜsjU\n\Ù˛®a\‚7Éƒ•U†Pî\ﬁ\·‹¢\ˆä˛§ú√•ç\Ê\Í•!1Mo∞T°F\Ë(/é5ˇ.ch¡¶.êó','John Doe'),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'jÇ\ËBV2ÖCì\Á™\·K\Ù¢t|ßä&3@Râÿ≠â\‚\√a|ÑúnÇﬁ´à¶µπ∑ü\Z∏JüK0é\\-º˚@2hAS','Steve Smith');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -172,4 +177,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-16 20:47:53
+-- Dump completed on 2021-02-22 13:14:03
