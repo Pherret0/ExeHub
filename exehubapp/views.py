@@ -10,7 +10,14 @@ from django.db import connection
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html')
+    context = {
+        "data": ["A man in has fallen into the river in lego city!", "James has used an object!", 1, 2, 3, 4, 5],
+    }
+    return render(request, 'index.html', context)
+
+
+def cat(request):
+    return render(request, 'cat.html')
 
 
 @csrf_exempt
@@ -48,8 +55,8 @@ def createEvent(request):
     # Get user input from HTML form
     name = request.POST.get('event_name')
     owner = request.POST.get('owner')
-    start = '2020-12-05 12:12:12'
-    end = '2021-12-12 12:12:12'
+    start = request.POST.get('start')
+    end = request.POST.get('end')
     location = request.POST.get('location')
     description = request.POST.get('description')
     min_attendees = request.POST.get('attendees_min')
