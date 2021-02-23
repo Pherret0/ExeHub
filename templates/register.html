@@ -1,0 +1,44 @@
+<!-- Created By Kai -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/register.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
+{% endblock %}
+
+{% block title %} Register {% endblock %}
+
+{% block content %}
+    <h1>Register:</h1>
+    <div id="form_container">
+        <form name="register" id="register" method="post" action="">
+            <label for="fname">First Name</label>
+            <br>
+            <input type="text" id="fname" name="fname">
+            <br>
+
+            <label for="name">Last Name</label>
+            <br>
+            <input type="text" id="name" name="name">
+            <br>
+
+            <label for="email">Email</label>
+            <br>
+            <input type="text" id="email" name="email">
+            <br>
+
+            <label for="dob">Date of Birth</label>
+            <br>
+            <input type="date" id="dob" name="dob">
+            <br>
+
+            <label for="password">Password</label>
+            <br>
+            <input type="password" id="password" name="password">
+            <br>
+
+            <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
+        </form>
+    </div>
+{% endblock %}

@@ -21,6 +21,24 @@ def cat(request):
 
 
 @csrf_exempt
+def register(request):
+    return render(request, 'register.html')
+
+
+@csrf_exempt
+def addUser(request):
+    fname = request.POST.get('fname')
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    dob = request.POST.get('dob')
+    password = request.POST.get('password')
+    fullName = fname + " " + name
+    print(email)
+    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName)
+    record.save()
+    return HttpResponse("Success!")
+
+@csrf_exempt
 def addEvent(request):
     return render(request, 'addevent.html')
 

@@ -10,5 +10,7 @@ urlpatterns = [
     path('cat/', views.cat, name='cat'),
     path('events/<int:event_id>', views.viewEventDetails, name='event'),
     path('creategroup/', views.createGroup, name='creategroup'),
+    path('register/', views.register, name='register'),
+    path('register/addUser/', views.addUser, name='addUser'),
 
 ]
