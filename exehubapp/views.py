@@ -40,28 +40,17 @@ def createEvent(request):
     NOTE: Owner will correspond to the user logged in, once this is set up.
     """
 
-    try:
-        group = ExehubappGroup.objects.get(group_id=1)
-    except:
-        group_name = 'Test Group'
-        group_owner = 'Test'
-        group_email = 'Test@hotmail.com'
-        group_irc = '696969'
-        fee = '6969696'
-        group_record = group = ExehubappGroup(group_name=group_name, group_owner=group_owner, group_email=group_email,
-                                        group_irc=group_irc, fee=fee)
-        group_record.save()
-
     # Get user input from HTML form
     name = request.POST.get('event_name')
     owner = request.POST.get('owner')
     start = request.POST.get('start')
     end = request.POST.get('end')
+    group = UniGroups.objects.get(group_id=1)
     location = request.POST.get('location')
     description = request.POST.get('description')
     min_attendees = request.POST.get('attendees_min')
     max_attendees = request.POST.get('attendees_max')
-    record = ExehubappEvent(event_name=name, description=description, event_owner=owner, group=group, start=start,
+    record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
                             end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
     record.save()
     return HttpResponse("Success!")

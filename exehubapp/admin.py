@@ -1,12 +1,13 @@
 from django.contrib import admin
 
-from .models import ExehubappEvent
-from .models import ExehubappGroup
-from .models import ExehubappUser
-from .models import ExehubappAttendee
-from .models import ExehubappMember
-admin.site.register(ExehubappEvent)
-admin.site.register(ExehubappGroup)
-admin.site.register(ExehubappUser)
-admin.site.register(ExehubappAttendee)
-admin.site.register(ExehubappMember)
+from .models import Events
+from .models import UniGroups
+from .models import Users
+from .models import Attendees
+from .models import Members
+admin.site.register(Events)
+admin.site.register(UniGroups)
+admin.site.register(Users)
+admin.site.register(Attendees)
+admin.site.register(Members)
+
