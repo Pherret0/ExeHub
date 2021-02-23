@@ -43,15 +43,15 @@ def createEvent(request):
     # Get user input from HTML form
     name = request.POST.get('event_name')
     owner = request.POST.get('owner')
+    group = UniGroups.objects.get(group_id=1)
     start = request.POST.get('start')
     end = request.POST.get('end')
-    group = UniGroups.objects.get(group_id=1)
     location = request.POST.get('location')
     description = request.POST.get('description')
     min_attendees = request.POST.get('attendees_min')
     max_attendees = request.POST.get('attendees_max')
     record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
-                            end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
+                    end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
     record.save()
     return HttpResponse("Success!")
 
