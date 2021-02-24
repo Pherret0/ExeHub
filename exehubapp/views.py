@@ -5,10 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from exehubapp.models import *
 from django.db import connection
-import sys
 import hashlib
-from hashlib import sha3_512
-import _sha3
 
 
 # Create your views here.
