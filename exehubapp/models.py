@@ -65,7 +65,7 @@ class Users(models.Model):
     date_of_birth = models.DateField()
     email = models.CharField(unique=True, max_length=254)
     irc_username = models.CharField(max_length=9, blank=True, null=True)
-    password_hash = models.CharField(max_length=64)
+    password_hash = models.BinaryField()
     name = models.CharField(max_length=747)
 
     class Meta:

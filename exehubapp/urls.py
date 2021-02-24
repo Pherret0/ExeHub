@@ -12,5 +12,7 @@ urlpatterns = [
     path('creategroup/', views.createGroup, name='creategroup'),
     path('register/', views.register, name='register'),
     path('register/addUser/', views.addUser, name='addUser'),
+    path('login/', views.login, name='login'),
+    path('login/verifyUser/', views.verifyUser, name='verifyUser'),
 
 ]

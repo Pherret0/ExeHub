@@ -5,6 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from exehubapp.models import *
 from django.db import connection
+import sys
+import hashlib
+from hashlib import sha3_512
+import _sha3
 
 
 # Create your views here.
@@ -32,11 +36,29 @@ def addUser(request):
     email = request.POST.get('email')
     dob = request.POST.get('dob')
     password = request.POST.get('password')
+    hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+    pswd = hash_sha3_512.digest()
     fullName = fname + " " + name
-    print(email)
-    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName)
+    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd)
     record.save()
     return HttpResponse("Success!")
+
+@csrf_exempt
+def login(request):
+    return render(request, 'login.html')
+
+
+@csrf_exempt
+def verifyUser(request, email,password_hash):
+    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT email,password_hash FROM users WHERE email=%s AND password_hash=%s", (email,password_hash,))
+        data = dictfetchall(cursor)
+        if data:
+            return HttpResponse("Success!")
+        else:
+            print("Didn't work")
+
 
 @csrf_exempt
 def addEvent(request):
