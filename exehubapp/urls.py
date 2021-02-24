@@ -15,4 +15,5 @@ urlpatterns = [
     path('register/addUser/', views.addUser, name='addUser'),
     path('groups/', views.viewGroups, name='groups'),
 
+
 ]
