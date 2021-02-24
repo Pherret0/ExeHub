@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block links %}
-    <script type="text/javascript" src="{% static 'exehubapp/javascript/addevent.js' %}"></script>
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/creategroup.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
 {% endblock %}
 
@@ -12,10 +12,22 @@
 {% block content %}
     <h1>Create Group:</h1>
     <div id="form_container">
-        <form name="groups" id="groups" method="post" action="">
-            <label for="groupname">Group Name</label>
+        <form name="uni_groups" id="uni_groups" method="post" action="">
+            <label for="group_name">Group Name</label>
             <br>
-            <input type="text" id="groupname" name="groupname">
+            <input type="text" id="group_name" name="group_name">
+            <br>
+            <label for="group_owner">Group Owner</label>
+            <br>
+            <input type="text" id="group_owner" name="group_owner">
+            <br>
+            <label for="group_email">Group E-mail</label>
+            <br>
+            <input type="text" id="group_email" name="group_email">
+            <br>
+            <label for="fee">Fee</label>
+            <br>
+            <input type="number" step="0.01" id="fee" name="fee">
             <br>
             <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
         </form>

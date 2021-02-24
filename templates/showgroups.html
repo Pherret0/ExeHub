@@ -1,0 +1,31 @@
+<!-- Created By Jack -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block title %} View Groups {% endblock %}
+
+{% block content %}
+    <h1>Groups</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>E-mail</th>
+            <th>Fee</th>
+        </tr>
+
+        {% for row in data %}
+            <tr>
+               <th> {{ row.group_name }}</th>
+               <th> {{ row.group_owner }} </th>
+               <th> {{ row.group_email }} </th>
+               <th> {{ row.fee }} </th>
+           </tr>
+
+        {% endfor %}
+    </table>
+
+{% endblock %}

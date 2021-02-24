@@ -9,10 +9,10 @@ urlpatterns = [
     path('events/', views.viewAllEvents, name='events'),
     path('cat/', views.cat, name='cat'),
     path('events/<int:event_id>', views.viewEventDetails, name='event'),
-    path('creategroup/', views.createGroup, name='creategroup'),
+    path('creategroup/', views.createGroup, name='createGroup'),
+    path('creategroup/create/', views.createGroupForm, name='createGroupForm'),
     path('register/', views.register, name='register'),
     path('register/addUser/', views.addUser, name='addUser'),
-    path('login/', views.login, name='login'),
-    path('login/verifyUser/', views.verifyUser, name='verifyUser'),
+    path('groups/', views.viewGroups, name='groups'),
 
 ]

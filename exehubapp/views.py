@@ -69,6 +69,25 @@ def addEvent(request):
 def createGroup(request):
     return render(request, 'creategroup.html')
 
+@csrf_exempt
+def createGroupForm(request):
+    """
+    Currently a test function- final functionality should NOT look like this
+    Currently creates a new group if one does not already exist (which is hardcoded), which can be used as the
+    group attribute for the event. Takes values from HTML form for creating event and saves to db.
+    NOTE: Event group will correspond to the correct group when this is set up.
+    NOTE: Owner will correspond to the user logged in, once this is set up.
+    """
+
+    # Get user input from HTML form
+    group_name = request.POST.get('group_name')
+    group_owner = request.POST.get('group_owner')
+    group_email = request.POST.get('group_email')
+    fee = request.POST.get('fee')
+    record = UniGroups(group_name=group_name, group_owner=group_owner, group_email=group_email, fee=fee)
+    record.save()
+    return HttpResponse("Success!")
+
 
 @csrf_exempt
 def createEvent(request):
@@ -121,6 +140,16 @@ def viewEventDetails(request, event_id):
         }
         print(row)
     return render(request, 'event.html', context)
+
+def viewGroups(request):
+    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM uni_groups")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+    return render(request, 'showgroups.html', context)
 
 
 def dictfetchall(cursor):
