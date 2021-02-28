@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from exehubapp.models import *
 from django.db import connection
+import hashlib
 
 
 # Create your views here.
@@ -32,9 +33,10 @@ def addUser(request):
     email = request.POST.get('email')
     dob = request.POST.get('dob')
     password = request.POST.get('password')
+    hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+    pswd = hash_sha3_512.digest()
     fullName = fname + " " + name
-    print(email)
-    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName)
+    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd)
     record.save()
     return HttpResponse("Success!")
 

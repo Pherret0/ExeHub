@@ -1,4 +1,4 @@
-<!-- Created By Travis -->
+<!-- Created By Kai -->
 $(document).ready(function(){
     $('#register').submit(function (e) {
         alert("Sending...")
