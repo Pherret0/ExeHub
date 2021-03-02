@@ -16,5 +16,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('register/addUser/', views.addUser, name='addUser'),
     path('groups/', views.viewGroups, name='groups'),
+    path('termsconditions/', views.termsConditions, name='termsConditions'),
 
 ]

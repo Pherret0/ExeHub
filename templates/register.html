@@ -38,7 +38,16 @@
             <input type="password" id="password" name="password" required>
             <br>
 
-            <input type="submit" name="submit" id="submit" value="Submit" onclick="validate()">
+            <label for="T&C">
+                Do you agree to the Terms and Conditions?
+                <br>
+                <a href ="/termsconditions/" target="_blank" style="all:unset;">View T&Cs</a>
+                <br>
+            </label>
+            <input type="checkbox" id="T&C" required>
+            <br>
+
+            <input type="submit" name="submit" id="submit" value="Submit">
         </form>
     </div>
 {% endblock %}

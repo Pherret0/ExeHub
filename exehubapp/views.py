@@ -115,6 +115,13 @@ def viewGroups(request):
     return render(request, 'showgroups.html', context)
 
 
+def termsConditions(request):
+    """
+    View to display the termsconditions.html template.
+    """
+    return render(request, 'termsconditions.html')
+
+
 # Define functions
 
 @csrf_exempt
