@@ -1,55 +1,133 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import loader
-from exehubapp.models import *
+from .models import *
 from django.db import connection
 import hashlib
 
+# Define the web app views
 
-# Create your views here.
 
 def index(request):
+    """
+    View to display the index.html template.
+    Passes the the context dictionary with data to be displayed.
+    """
+
     context = {
-        "data": ["A man in has fallen into the river in lego city!", "James has used an object!", 1, 2, 3, 4, 5],
+        "data": ["A man in has fallen into the river in lego city!",
+                 "James has used an object!", 1, 2, 3, 4, 5],
     }
     return render(request, 'index.html', context)
 
 
 def cat(request):
+    """
+    View to display the cat.html template.
+    """
     return render(request, 'cat.html')
 
 
 @csrf_exempt
 def register(request):
+    """
+    View to display the index.html template.
+    Passes the the context dictionary with data to be displayed.
+    """
     return render(request, 'register.html')
 
 
 @csrf_exempt
-def addUser(request):
-    fname = request.POST.get('fname')
-    name = request.POST.get('name')
-    email = request.POST.get('email')
-    dob = request.POST.get('dob')
-    password = request.POST.get('password')
-    hash_sha3_512 = hashlib.new("sha3_512", password.encode())
-    pswd = hash_sha3_512.digest()
-    fullName = fname + " " + name
-    record = Users (is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd)
-    record.save()
-    return HttpResponse("Success!")
-
-@csrf_exempt
 def login(request):
+    """
+    View to display the login.html template.
+    """
     return render(request, 'login.html')
 
 
 @csrf_exempt
-def verifyUser(request, email,password_hash):
+def addEvent(request):
+    """
+    View to display the addevent.html template.
+    """
+    return render(request, 'addevent.html')
+
+
+@csrf_exempt
+def createGroup(request):
+    """
+    View to display the creategroup.html template.
+    """
+    return render(request, 'creategroup.html')
+
+
+def viewAllEvents(request):
+    """
+    View to display the showevents.html template.
+    Passes the the context dictionary with data with events
+    data to the template to be displayed
+    """
+
+    # Select all the events from the events table
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM events")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+    return render(request, 'showevents.html', context)
+
+
+def viewEventDetails(request, event_id):
+    """
+    View to display the event.html template.
+    Passes the the context dictionary with data about the individual
+    event to be displayed in the template.
+    """
+
+    # Select the event from the events table with corresponding event_id and pass to the event template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM events WHERE event_id=%s", (event_id,))
+        row = cursor.fetchone()
+        if not row:
+            # If there is no event with the event_id specified, redirect to the home page.
+            return render(request, 'index.html')
+
+        context = {
+            'data': row
+        }
+
+    return render(request, 'event.html', context)
+
+
+def viewGroups(request):
+    """
+    View to display the showgroups.html template.
+    Passes the the context dictionary with data to be displayed.
+    """
     # Select all the events from the events table and save them into a dictionary, pass to the showevents template
     with connection.cursor() as cursor:
-        cursor.execute("SELECT email,password_hash FROM users WHERE email=%s AND password_hash=%s", (email,password_hash,))
+        cursor.execute("SELECT * FROM uni_groups")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+    return render(request, 'showgroups.html', context)
+
+
+# Define functions
+
+@csrf_exempt
+def verifyUser(request, email, password_hash):
+    """
+    Function to check whether the users login
+    details are valid.
+    """
+
+    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT email,password_hash FROM users WHERE email=%s AND password_hash=%s",
+                       (email, password_hash,))
         data = dictfetchall(cursor)
         if data:
             return HttpResponse("Success!")
@@ -58,30 +136,20 @@ def verifyUser(request, email,password_hash):
 
 
 @csrf_exempt
-def addEvent(request):
-    return render(request, 'addevent.html')
-
-
-@csrf_exempt
-def createGroup(request):
-    return render(request, 'creategroup.html')
-
-@csrf_exempt
-def createGroupForm(request):
+def addUser(request):
     """
-    Currently a test function- final functionality should NOT look like this
-    Currently creates a new group if one does not already exist (which is hardcoded), which can be used as the
-    group attribute for the event. Takes values from HTML form for creating event and saves to db.
-    NOTE: Event group will correspond to the correct group when this is set up.
-    NOTE: Owner will correspond to the user logged in, once this is set up.
+    Function to process the submission of the register form.
+    Requests data from the register form and saves to the database.
     """
-
-    # Get user input from HTML form
-    group_name = request.POST.get('group_name')
-    group_owner = request.POST.get('group_owner')
-    group_email = request.POST.get('group_email')
-    fee = request.POST.get('fee')
-    record = UniGroups(group_name=group_name, group_owner=group_owner, group_email=group_email, fee=fee)
+    fname = request.POST.get('fname')
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    dob = request.POST.get('dob')
+    password = request.POST.get('password')
+    hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+    pswd = hash_sha3_512.digest()
+    fullName = fname + " " + name
+    record = Users(is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd)
     record.save()
     return HttpResponse("Success!")
 
@@ -89,11 +157,8 @@ def createGroupForm(request):
 @csrf_exempt
 def createEvent(request):
     """
-    Currently a test function- final functionality should NOT look like this
-    Currently creates a new group if one does not already exist (which is hardcoded), which can be used as the
-    group attribute for the event. Takes values from HTML form for creating event and saves to db.
-    NOTE: Event group will correspond to the correct group when this is set up.
-    NOTE: Owner will correspond to the user logged in, once this is set up.
+    Function to request the data from the create
+    event form and save to the database.
     """
 
     # Get user input from HTML form
@@ -112,46 +177,31 @@ def createEvent(request):
     return HttpResponse("Success!")
 
 
-def viewAllEvents(request):
-    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM events")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-    return render(request, 'showevents.html', context)
+@csrf_exempt
+def createGroupForm(request):
+    """
+    Function to request the data from the create
+    group form and save to the database.
+    """
 
-
-def viewEventDetails(request, event_id):
-    # Select the event from the events table with corresponding event_id and pass to the event template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM events WHERE event_id=%s", (event_id,))
-        row = cursor.fetchone()
-        if not row:
-            # If there is no event with the event_id specified, redirect to the home page.
-            return render(request, 'index.html')
-
-        context = {
-            'data': row
-        }
-        print(row)
-    return render(request, 'event.html', context)
-
-def viewGroups(request):
-    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM uni_groups")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-    return render(request, 'showgroups.html', context)
+    # Get user input from HTML form
+    group_name = request.POST.get('group_name')
+    group_owner = request.POST.get('group_owner')
+    group_email = request.POST.get('group_email')
+    fee = request.POST.get('fee')
+    record = UniGroups(group_name=group_name, group_owner=group_owner, group_email=group_email, fee=fee)
+    record.save()
+    return HttpResponse("Success!")
 
 
 def dictfetchall(cursor):
+    """
+    Function to return query from the database in a
+    dictionary data structure.
+    """
     # Returns all rows from a cursor as a dictionary
     desc = cursor.description
+
     return [
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
