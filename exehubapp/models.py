@@ -1,14 +1,11 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
 
 class Attendees(models.Model):
+    """
+    Attendees table in the database.
+    """
+
     user = models.ForeignKey('Users', models.DO_NOTHING)
     event = models.ForeignKey('Events', models.DO_NOTHING)
 
@@ -19,6 +16,10 @@ class Attendees(models.Model):
 
 
 class Events(models.Model):
+    """
+    Events table in the database.
+    """
+
     event_id = models.AutoField(primary_key=True)
     event_name = models.CharField(max_length=50)
     event_owner = models.CharField(max_length=747, blank=True, null=True)
@@ -36,6 +37,10 @@ class Events(models.Model):
 
 
 class Members(models.Model):
+    """
+    Members table in the database.
+    """
+
     user = models.ForeignKey('Users', models.DO_NOTHING)
     group = models.ForeignKey('UniGroups', models.DO_NOTHING)
     is_group_admin = models.PositiveIntegerField()
@@ -47,6 +52,10 @@ class Members(models.Model):
 
 
 class UniGroups(models.Model):
+    """
+    UniGroups table in the database.
+    """
+
     group_id = models.AutoField(primary_key=True)
     group_name = models.CharField(unique=True, max_length=50)
     group_owner = models.CharField(max_length=747, blank=True, null=True)
@@ -60,6 +69,10 @@ class UniGroups(models.Model):
 
 
 class Users(models.Model):
+    """
+    Users table in the database.
+    """
+
     user_id = models.AutoField(primary_key=True)
     is_server_admin = models.PositiveIntegerField()
     date_of_birth = models.DateField()
