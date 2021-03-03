@@ -8,7 +8,11 @@ $(document).ready(function(){
             url: 'create/',
             data: $(this).serialize(),
             success: function(response){
-                alert("Event successfully added!");
+                if (response == "0"){
+                    alert("Event created successfully");
+                } else{
+                    alert("Something went wrong");
+                }
             }
         });
    });
