@@ -65,8 +65,13 @@ def createGroupForm(request):
     group_email = request.POST.get('group_email')
     fee = request.POST.get('fee')
     record = UniGroups(group_name=group_name, group_owner=group_owner, group_email=group_email, fee=fee)
-    record.save()
-    return HttpResponse("Success!")
+    try:
+        record.save()
+        print("Added task successfully")
+        return HttpResponse("0")
+    except:
+        print("failed to ass task")
+        return HttpResponse("1")
 
 
 @csrf_exempt
