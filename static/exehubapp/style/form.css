@@ -10,14 +10,14 @@
     width: 100%;
 }
 
-input:hover, input:focus {
+input:hover, input:focus textarea:hover, textarea:focus {
     opacity: 100%;
     background-color: white;
     width: 35%;
     color: black;
- }
+}
 
-input{
+input, textarea{
     background-color: rgb(0, 0, 0);
     width: 30%;
     opacity: 50%;
@@ -27,4 +27,29 @@ input{
     border-radius: 5px;
     transition-duration: 0.8s;
     color: white;
+}
+
+input:invalid:not(.submit), textarea:invalid{
+  border: 2px solid red;
+}
+
+input:valid:not(.submit), textarea:valid{
+  border: 2px solid green;
+}
+
+#post_type{
+    width:100%;
+    text-align: center;
+
+}
+
+.post_type_button{
+    display: inline-block;
+    transition-duration: 0.4s;
+    padding: 15px 32px;
+}
+
+.post_type_button:hover {
+  background-color: rgba(108, 163, 247, 1) !important; /* Green */
+  color: white !important;
 }

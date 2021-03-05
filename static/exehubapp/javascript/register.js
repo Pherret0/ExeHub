@@ -13,3 +13,15 @@ $(document).ready(function(){
         });
    });
 });
+
+var interval = 400;
+var timer = window.setInterval(function(){
+    // your code goes here ...
+    if(document.getElementById("register").checkValidity()){
+        document.getElementById("submit").style.border = "2px solid green";
+    }else{
+        document.getElementById("submit").style.border = "2px solid red";
+    }
+
+
+}, interval);

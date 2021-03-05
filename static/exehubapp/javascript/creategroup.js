@@ -20,3 +20,35 @@ $(document).ready(function()
         });
     });
 });
+
+
+function verifyUniqueGroup() {
+    var groupName = document.getElementById("group_name").value;
+    $.ajax({
+        type: 'POST',
+        url: 'verifyunique/',
+        data: {groupName: groupName},
+        dataType: "json",
+        success: function (response) {
+            if (response == "0") {
+                document.getElementById("duplicate_group").style.display="none";
+                document.getElementById("group_name").style.border = "2px solid green";
+            } else {
+                document.getElementById("duplicate_group").style.display="block";
+                document.getElementById("group_name").style.border = "2px solid red";
+            }
+        }
+    });
+}
+
+var interval = 400;
+var timer = window.setInterval(function(){
+    // your code goes here ...
+    if(document.getElementById("uni_groups").checkValidity()){
+        document.getElementById("submit").style.border = "2px solid green";
+    }else{
+        document.getElementById("submit").style.border = "2px solid red";
+    }
+
+
+}, interval);

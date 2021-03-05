@@ -13,17 +13,19 @@
     <h1>Create Group:</h1>
     <div id="form_container">
         <form name="uni_groups" id="uni_groups" method="post" action="">
-            <label for="group_name">Group Name</label>
+            <label for="group_name">Group Name*</label>
             <br>
-            <input type="text" id="group_name" name="group_name">
+            <input type="text" id="group_name" name="group_name" onfocusout="verifyUniqueGroup()" required>
             <br>
-            <label for="group_owner">Group Owner</label>
+            <p id ="duplicate_group" style="display:none">Group already exists</p>
+
+            <label for="group_owner">Group Owner*</label>
             <br>
-            <input type="text" id="group_owner" name="group_owner">
+            <input type="text" id="group_owner" name="group_owner" required>
             <br>
             <label for="group_email">Group E-mail</label>
             <br>
-            <input type="text" id="group_email" name="group_email">
+            <input type="text" id="group_email" name="group_email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
             <br>
             <label for="fee">Fee</label>
             <br>

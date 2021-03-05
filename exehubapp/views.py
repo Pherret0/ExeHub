@@ -50,7 +50,16 @@ def addEvent(request):
     """
     View to display the addevent.html template.
     """
-    return render(request, 'addevent.html')
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM uni_groups")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+
+
+    return render(request, 'addevent.html', context)
 
 
 @csrf_exempt
@@ -169,19 +178,29 @@ def createEvent(request):
     Function to request the data from the create
     event form and save to the database.
     """
-
-    # Get user input from HTML form
+    type = request.POST.get('type')
     name = request.POST.get('event_name')
-    owner = request.POST.get('owner')
-    group = UniGroups.objects.get(group_id=1)
-    start = request.POST.get('start')
-    end = request.POST.get('end')
-    location = request.POST.get('location')
+    group_input = request.POST.get('group')
+    group = UniGroups.objects.get(group_name=group_input)
     description = request.POST.get('description')
-    min_attendees = request.POST.get('attendees_min')
-    max_attendees = request.POST.get('attendees_max')
-    record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
-                    end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
+    owner = request.POST.get('owner')
+
+    if type == "event":
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+        location = request.POST.get('location')
+        min_attendees = request.POST.get('attendees_min')
+        max_attendees = request.POST.get('attendees_max')
+        record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
+                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
+
+    if type == "text":
+        record = Events(event_name=name, description=description, event_owner=owner, group=group)
+
+    if type =="image":
+        image = request.POST.get('image')
+        record = Events(event_name=name, description=description, event_owner=owner, group=group, image=image)
+
     try:
         record.save()
         return HttpResponse("0")
@@ -221,3 +240,18 @@ def dictfetchall(cursor):
         dict(zip([col[0] for col in desc], row))
         for row in cursor.fetchall()
     ]
+
+
+@csrf_exempt
+def verifyUniqueGroup(request):
+    groupName = request.POST.get('groupName')
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (groupName,))
+        row = cursor.fetchone()
+
+    if row:
+        return HttpResponse("1")
+    else:
+        return HttpResponse("0")
+
