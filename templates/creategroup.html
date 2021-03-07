@@ -15,14 +15,11 @@
         <form name="uni_groups" id="uni_groups" method="post" action="">
             <label for="group_name">Group Name*</label>
             <br>
-            <input type="text" id="group_name" name="group_name" onfocusout="verifyUniqueGroup()" required>
+            <input type="text" id="group_name" name="group_name" onfocusout="verifyUniqueGroup()"  required>
             <br>
             <p id ="duplicate_group" style="display:none">Group already exists</p>
 
-            <label for="group_owner">Group Owner*</label>
-            <br>
-            <input type="text" id="group_owner" name="group_owner" required>
-            <br>
+            <input type="hidden" id="group_owner" name="group_owner" value=1>
             <label for="group_email">Group E-mail</label>
             <br>
             <input type="text" id="group_email" name="group_email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
@@ -31,7 +28,7 @@
             <br>
             <input type="number" step="0.01" id="fee" name="fee">
             <br>
-            <input type="submit" name="submit" id="submit" value="Submit" onclick="update()">
+            <input type="submit" name="submit" id="submit" value="Submit">
         </form>
     </div>
 

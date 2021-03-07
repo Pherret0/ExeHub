@@ -25,7 +25,8 @@
 
             <label for="email">Email</label>
             <br>
-            <input type="text" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+            <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onfocusout="verifyUniqueEmail()"  required>
+            <p id ="duplicate_user" style="display:none">Email address already registered</p>
             <br>
 
             <label for="dob">Date of Birth</label>
@@ -35,7 +36,8 @@
 
             <label for="password">Password</label>
             <br>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+            <button type="button" id="button">Help</button>
             <br>
 
             <label for="T&C">
@@ -49,5 +51,15 @@
 
             <input type="submit" name="submit" id="submit" value="Submit">
         </form>
+
+        <div id="popup" class="popup">
+          <div class="popup-content">
+            <span class="close">&times;</span>
+            <p>Password must contain at least one number and one uppercase and
+                lowercase letter, and at least 8 or more characters</p>
+          </div>
+        </div>
     </div>
+
 {% endblock %}
+

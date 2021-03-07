@@ -52,3 +52,8 @@ a:hover{
 table, th, td {
   border: 1px solid black;
 }
+
+p{
+    font-size: 15px;
+    font-family: Arial;
+}

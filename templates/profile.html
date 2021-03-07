@@ -1,0 +1,62 @@
+<!-- Created By Jack -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/profile.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
+{% endblock %}
+
+{% block title %} My Profile {% endblock %}
+
+{% block content %}
+    <div>
+        <h1>Profile</h1>
+        <p>Hello (insert name here)!</p>
+        <h1>Your groups:</h1>
+
+        <h1>Change Email:</h1>
+        <form name="update_email" id="update_email" method="post" action="">
+            <label for="email">New Email *</label><br>
+            <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onfocusout="verifyUniqueEmail()" required><br>
+            <p id ="duplicate_user" style="display:none">Email address already registered</p>
+            <label for="password">Password *</label><br>
+            <input type="password" id="password" name="password" required>
+            <input type="hidden" id="user_id" name="user_id" value=1><br>
+            <input type="submit" value="submit" name="submit" id="submit">
+        </form>
+
+        <h1>Change Password:</h1>
+        <form name="update_password" id="update_password" method="post" action="">
+            <label for="current_password">Current Password *</label><br>
+            <input type="password" id="current_password" name="current_password" required>
+            <br>
+            <label for="new_password">New Password *</label><br>
+            <input type="password" id="new_password" name="new_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+            <button type="button" id="button">Help</button>
+            <input type="hidden" id="user_id" name="user_id" value=1><br>
+            <input type="submit" value="submit" name="submit" id="submit_pass">
+        </form>
+
+        <h1>Logout:</h1>
+
+        <h1>Delete Account:</h1>
+        <form name="delete_account" id="delete_account" method="post" action="">
+            <label for="password">Confirm Password *</label><br>
+            <input type="password" id="password" name="password" required>
+            <input type="hidden" id="user_id" name="user_id" value=1><br>
+            <input type="submit" value="Confirm Delete" name="submit" id="submit">
+        </form>
+        <br><br><br>
+
+        <div id="popup" class="popup">
+          <div class="popup-content">
+            <span class="close">&times;</span>
+            <p>Password must contain at least one number and one uppercase and
+                lowercase letter, and at least 8 or more characters</p>
+          </div>
+        </div>
+
+    </div>
+
+ {% endblock %}

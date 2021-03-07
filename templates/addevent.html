@@ -11,191 +11,102 @@
 
 {% block content %}
     <h1>New Post:</h1>
-    <div id="form_container">
 
-        <div id="post_type">
-            <button class ="post_type_button" id="text_button" onclick="showTextForm()" style="background-color: rgba(108, 163, 247, 1); color:white;">Text</button>
-            <button class ="post_type_button" id="event_button" onclick="showEventForm()">Event</button>
-            <button class ="post_type_button" id="image_button" onclick="showImageForm()">Image</button>
+    {% if not data %}
+        <p>Please join an existing group, or create your own to create a new post.</p>
+    {% else %}
+        <div id="form_container">
+
+            <div id="post_type">
+                <button class ="post_type_button" id="text_button" onclick="showTextForm()" style="background-color: rgba(108, 163, 247, 1); color:white;">Text</button>
+                <button class ="post_type_button" id="event_button" onclick="showEventForm()">Event</button>
+                <button class ="post_type_button" id="image_button" onclick="showImageForm()">Image</button>
+            </div>
+
+
+            <form name="event" id="eventForm" method="post" action="" >
+                <div id ="name_section" >
+                    <br>
+                    <label for="event_name">Title *</label>
+                    <br>
+                    <input type="text" id="event_name" name="event_name" class="unfilled" maxlength="48" required>
+
+                </div>
+
+                <div id ="start_section" style="display:none">
+                    <label for="start">Event Start Time *</label>
+                    <br>
+                    <input type="datetime-local" id="start" name="start" required>
+                    <br>
+                </div>
+
+                <div id ="end_section" style="display:none">
+                    <label for="end">Event End Time *</label>
+                    <br>
+                    <input type="datetime-local" id="end" name="end" required >
+                    <br>
+                </div>
+
+                <div id ="location_section" style="display:none">
+                    <label for="location" >Location *</label>
+                    <br>
+                    <input type="text" id="location" name="location" maxlength="198">
+                    <br>
+                </div>
+
+                <div id ="description_section">
+                    <label for="description">Description *</label>
+                    <br>
+                    <textarea id="description" name="description" rows="4" cols="50" required maxlength="2000"></textarea>
+                    <br>
+                </div>
+
+                <div id ="attendees_min_section" style="display:none">
+                    <label for="attendees_min">Minimum Attendees</label>
+                    <br>
+                    <input type="number" id="attendees_min" name="attendees_min">
+                    <br>
+                </div>
+
+                <div id ="attendees_max_section" style="display:none">
+                    <label for="attendees_max">Maximum Attendees</label>
+                    <br>
+                    <input type="number" id="attendees_max" name="attendees_max" >
+                    <br>
+                </div>
+
+                <div id ="image_section" style="display:none" >
+                    <label for="image">Image *</label>
+                    <br>
+                    <input type="file" id="image" name="image">
+                    <br>
+                </div>
+
+                <label>Group *</label>
+                <br>
+
+
+
+
+
+
+                <select id ="group" name="group">
+                        {% for row in data %}
+                            <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
+                         {% endfor %}
+
+
+                </select>
+                <br>
+
+                <input type="text" id="type" name="type" value="" style="display:none">
+
+                <input type="submit" name="submit" id="submit" class="submit" value="Post">
+
+                <br><br><br>
+
+            </form>
+
         </div>
-
-
-        <form name="event" id="eventForm" method="post" action="" >
-            <div id ="name_section" >
-                <label for="event_name">Title *</label>
-                <br>
-                <input type="text" id="event_name" name="event_name" class="unfilled" maxlength="48" required>
-                <br>
-            </div>
-
-            <div id ="start_section" style="display:none">
-                <label for="start">Event Start Time *</label>
-                <br>
-                <input type="datetime-local" id="start" name="start" required>
-                <br>
-            </div>
-
-            <div id ="end_section" style="display:none">
-                <label for="end">Event End Time *</label>
-                <br>
-                <input type="datetime-local" id="end" name="end" required >
-                <br>
-            </div>
-
-            <div id ="location_section" style="display:none">
-                <label for="location" >Location *</label>
-                <br>
-                <input type="text" id="location" name="location" maxlength="198">
-                <br>
-            </div>
-
-            <div id ="description_section">
-                <label for="description">Description *</label>
-                <br>
-                <textarea id="description" name="description" rows="4" cols="50" required maxlength="2000"></textarea>
-                <br>
-            </div>
-
-            <div id ="attendees_min_section" style="display:none">
-                <label for="attendees_min">Minimum Attendees</label>
-                <br>
-                <input type="number" id="attendees_min" name="attendees_min">
-                <br>
-            </div>
-
-            <div id ="attendees_max_section" style="display:none">
-                <label for="attendees_max">Maximum Attendees</label>
-                <br>
-                <input type="number" id="attendees_max" name="attendees_max" >
-                <br>
-            </div>
-
-            <div id ="image_section" style="display:none" >
-                <label for="image">Image *</label>
-                <br>
-                <input type="text" id="image" name="image">
-                <br>
-            </div>
-
-            <label>Group *</label>
-            <br>
-            <select id ="group" name="group">
-
-                <br>
-                {% if not data %}
-                    <p>You need to create or join a group before creating a post.</p>
-                {% else %}
-                    {% for row in data %}
-                        <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
-                     {% endfor %}
-                {% endif %}
-
-            </select>
-            <br>
-
-            <input type="text" id="type" name="type" value="" style="display:none">
-
-            <input type="submit" name="submit" id="submit" class="submit" value="Post">
-
-            <br><br><br>
-
-        </form>
-
-        <script>
-
-
-
-
-
-            var interval = 400;
-            var timer = window.setInterval(function(){
-                // your code goes here ...
-                if(document.getElementById("eventForm").checkValidity()){
-                    document.getElementById("submit").style.border = "2px solid green";
-                }else{
-                    document.getElementById("submit").style.border = "2px solid red";
-                }
-
-
-            }, interval);
-
-
-
-
-            //Set default time of start and end input fields to current time
-            //and current time + 1 hour.
-            var now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('start').value = now.toISOString().slice(0,16);
-            now.setHours(now.getHours()+1);
-            document.getElementById('end').value = now.toISOString().slice(0,16);
-
-
-            //Functions for displaying the relevant form based.
-            function showTextForm() {
-                document.getElementById("start_section").style.display = "none";
-                document.getElementById("start").required = false;
-                document.getElementById("end_section").style.display = "none";
-                document.getElementById("end").required = false;
-                document.getElementById("location_section").style.display = "none";
-                document.getElementById("location").required = false;
-                document.getElementById("attendees_min_section").style.display = "none";
-                document.getElementById("attendees_max_section").style.display = "none";
-                document.getElementById("image_section").style.display = "none";
-                document.getElementById("image").required = false;
-                document.getElementById("type").value = "text";
-
-                document.getElementById("event_button").style.backgroundColor = "transparent";
-                document.getElementById("text_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
-                document.getElementById("text_button").style.color = "white";
-                document.getElementById("event_button").style.color = "black";
-                document.getElementById("image_button").style.color = "black";
-                document.getElementById("image_button").style.backgroundColor = "transparent";
-            }
-
-            function showEventForm() {
-                document.getElementById("start_section").style.display = "block";
-                document.getElementById("start").required = true;
-                document.getElementById("end_section").style.display = "block";
-                document.getElementById("end").required = true;
-                document.getElementById("location_section").style.display = "block";
-                document.getElementById("location").required = true;
-                document.getElementById("attendees_min_section").style.display = "block";
-                document.getElementById("attendees_max_section").style.display = "block";
-                document.getElementById("image_section").style.display = "none";
-                document.getElementById("image").required = false;
-                document.getElementById("type").value = "event";
-
-                document.getElementById("event_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
-                document.getElementById("text_button").style.color = "black";
-                document.getElementById("event_button").style.color = "white";
-                document.getElementById("image_button").style.color = "black";
-                document.getElementById("text_button").style.backgroundColor = "transparent";
-                document.getElementById("image_button").style.backgroundColor = "transparent";
-            }
-
-            function showImageForm() {
-                document.getElementById("start_section").style.display = "none";
-                document.getElementById("start").required = false;
-                document.getElementById("end_section").style.display = "none";
-                document.getElementById("end").required = false;
-                document.getElementById("location_section").style.display = "none";
-                document.getElementById("location").required = false;
-                document.getElementById("attendees_min_section").style.display = "none";
-                document.getElementById("attendees_max_section").style.display = "none";
-                document.getElementById("image_section").style.display = "block";
-                document.getElementById("image").required = true;
-                document.getElementById("type").value = "image";
-
-                document.getElementById("event_button").style.backgroundColor = "transparent";
-                document.getElementById("text_button").style.backgroundColor = "transparent";
-                document.getElementById("text_button").style.color = "black";
-                document.getElementById("event_button").style.color = "black";
-                document.getElementById("image_button").style.color = "white";
-                document.getElementById("image_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
-            }
-
-        </script>
-    </div>
-
+    {% endif %}
 {% endblock %}
