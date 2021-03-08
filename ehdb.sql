@@ -16,6 +16,31 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `achievements`
+--
+
+DROP TABLE IF EXISTS `achievements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `achievements` (
+  `ach_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `ach_name` varchar(64) NOT NULL,
+  `requirement` text NOT NULL,
+  `value` int DEFAULT NULL,
+  UNIQUE KEY `ach_id` (`ach_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `achievements`
+--
+
+LOCK TABLES `achievements` WRITE;
+/*!40000 ALTER TABLE `achievements` DISABLE KEYS */;
+/*!40000 ALTER TABLE `achievements` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `attendees`
 --
 
@@ -28,7 +53,7 @@ CREATE TABLE `attendees` (
   PRIMARY KEY (`user_id`,`event_id`),
   KEY `event_id` (`event_id`),
   CONSTRAINT `attendees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `attendees_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `events` (`event_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `attendees_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -38,43 +63,8 @@ CREATE TABLE `attendees` (
 
 LOCK TABLES `attendees` WRITE;
 /*!40000 ALTER TABLE `attendees` DISABLE KEYS */;
-INSERT INTO `attendees` VALUES (1,1),(2,1),(1,2);
+INSERT INTO `attendees` VALUES (1,2);
 /*!40000 ALTER TABLE `attendees` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `events`
---
-
-DROP TABLE IF EXISTS `events`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `events` (
-  `event_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `event_name` varchar(50) NOT NULL,
-  `event_owner` varchar(747) DEFAULT NULL,
-  `group_id` int unsigned NOT NULL,
-  `start` timestamp NOT NULL,
-  `end` timestamp NULL DEFAULT NULL,
-  `location` varchar(200) DEFAULT NULL,
-  `description` varchar(2000) DEFAULT NULL,
-  `attendees_min` smallint unsigned DEFAULT NULL,
-  `attendees_max` smallint unsigned DEFAULT NULL,
-  PRIMARY KEY (`event_id`),
-  UNIQUE KEY `event_id` (`event_id`),
-  KEY `group_id` (`group_id`),
-  CONSTRAINT `events_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `events`
---
-
-LOCK TABLES `events` WRITE;
-/*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,'Welcome to Exeter',NULL,1,'2021-09-21 11:00:00',NULL,NULL,NULL,NULL,NULL),(2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15);
-/*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -106,6 +96,94 @@ INSERT INTO `members` VALUES (1,1,1),(2,1,0),(2,2,1);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `pics`
+--
+
+DROP TABLE IF EXISTS `pics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pics` (
+  `pic_id` int NOT NULL AUTO_INCREMENT,
+  `pic` mediumblob NOT NULL,
+  PRIMARY KEY (`pic_id`),
+  UNIQUE KEY `pic_id` (`pic_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pics`
+--
+
+LOCK TABLES `pics` WRITE;
+/*!40000 ALTER TABLE `pics` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pics` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts`
+--
+
+DROP TABLE IF EXISTS `posts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `posts` (
+  `post_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `post_name` varchar(50) NOT NULL,
+  `post_owner` varchar(747) NOT NULL,
+  `group_id` int unsigned NOT NULL,
+  `start` timestamp NULL DEFAULT NULL,
+  `end` timestamp NULL DEFAULT NULL,
+  `location` varchar(200) DEFAULT NULL,
+  `description` varchar(2000) DEFAULT NULL,
+  `attendees_min` smallint unsigned DEFAULT NULL,
+  `attendees_max` smallint unsigned DEFAULT NULL,
+  `type` enum('default','reply','event') NOT NULL,
+  `image` longblob,
+  `parent` int unsigned DEFAULT NULL,
+  `upvote` int DEFAULT NULL,
+  PRIMARY KEY (`post_id`),
+  UNIQUE KEY `event_id` (`post_id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts`
+--
+
+LOCK TABLES `posts` WRITE;
+/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL,NULL);
+/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `products`
+--
+
+DROP TABLE IF EXISTS `products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `products` (
+  `prod_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `prod_name` varchar(64) NOT NULL,
+  `prod_desc` varchar(1024) NOT NULL,
+  `cost` int DEFAULT NULL,
+  UNIQUE KEY `prod_id` (`prod_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `products`
+--
+
+LOCK TABLES `products` WRITE;
+/*!40000 ALTER TABLE `products` DISABLE KEYS */;
+/*!40000 ALTER TABLE `products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `uni_groups`
 --
 
@@ -116,13 +194,12 @@ CREATE TABLE `uni_groups` (
   `group_id` int unsigned NOT NULL AUTO_INCREMENT,
   `group_name` varchar(50) NOT NULL,
   `group_owner` varchar(747) DEFAULT NULL,
-  `group_email` varchar(254) NOT NULL,
   `group_irc` varchar(200) DEFAULT NULL,
   `fee` decimal(10,2) unsigned NOT NULL,
+  `group_email` varchar(254) NOT NULL,
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_id` (`group_id`),
   UNIQUE KEY `group_name` (`group_name`),
-  UNIQUE KEY `group_email` (`group_email`),
   UNIQUE KEY `group_irc` (`group_irc`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -133,7 +210,7 @@ CREATE TABLE `uni_groups` (
 
 LOCK TABLES `uni_groups` WRITE;
 /*!40000 ALTER TABLE `uni_groups` DISABLE KEYS */;
-INSERT INTO `uni_groups` VALUES (1,'Biscuit Soc','Steve Smith','yum@example.com','UoEBiscuits',9250.00),(2,'Computer Science Department','Ronaldo Menezes','compsci@example.com','Computer Science',0.00);
+INSERT INTO `uni_groups` VALUES (1,'Biscuit Soc','Steve Smith','UoEBiscuits',9250.00,''),(2,'Computer Science Department','Ronaldo Menezes','Computer Science',0.00,'');
 /*!40000 ALTER TABLE `uni_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,9 +229,13 @@ CREATE TABLE `users` (
   `irc_username` varchar(9) DEFAULT NULL,
   `password_hash` binary(64) NOT NULL,
   `name` varchar(747) NOT NULL,
+  `salt` char(16) NOT NULL,
+  `pic_id` int DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id` (`user_id`),
-  UNIQUE KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`),
+  KEY `pic_id` (`pic_id`),
+  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`pic_id`) REFERENCES `pics` (`pic_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -164,7 +245,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary '\ÈßTÜsjU\n\Ù˛®a\‚7Éƒ•U†Pî\ﬁ\·‹¢\ˆä˛§ú√•ç\Ê\Í•!1Mo∞T°F\Ë(/é5ˇ.ch¡¶.êó','John Doe'),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'jÇ\ËBV2ÖCì\Á™\·K\Ù¢t|ßä&3@Râÿ≠â\‚\√a|ÑúnÇﬁ´à¶µπ∑ü\Z∏JüK0é\\-º˚@2hAS','Steve Smith');
+INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary '\ÈßTÜsjU\n\Ù˛®a\‚7Éƒ•U†Pî\ﬁ\·‹¢\ˆä˛§ú√•ç\Ê\Í•!1Mo∞T°F\Ë(/é5ˇ.ch¡¶.êó','John Doe','',NULL),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'jÇ\ËBV2ÖCì\Á™\·K\Ù¢t|ßä&3@Râÿ≠â\‚\√a|ÑúnÇﬁ´à¶µπ∑ü\Z∏JüK0é\\-º˚@2hAS','Steve Smith','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -177,4 +258,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-22 13:14:03
+-- Dump completed on 2021-03-08  0:32:42
