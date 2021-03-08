@@ -1,15 +1,22 @@
 <!-- Created By Travis -->
-$(document).ready(function(){
-    $('#uni_groups').submit(function (e) {
-        alert("Sending...")
+$(document).ready(function()
+{
+    $('#uni_groups').submit(function(e)
+    {
+        alert("Creating Group...")
         e.preventDefault();
-        $.ajax({
+        $.ajax(
+        {
             type: 'POST',
             url: 'create/',
             data: $(this).serialize(),
             success: function(response){
-                alert("Group successfully created!");
+                if (response == "0"){
+                    alert("Group created successfully");
+                } else{
+                    alert("Duplicate group");
+                }
             }
         });
-   });
+    });
 });

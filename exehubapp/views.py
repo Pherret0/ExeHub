@@ -58,6 +58,8 @@ def createGroup(request):
     """
     View to display the creategroup.html template.
     """
+
+    # Get user input from HTML form
     return render(request, 'creategroup.html')
 
 
@@ -180,8 +182,11 @@ def createEvent(request):
     max_attendees = request.POST.get('attendees_max')
     record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
                     end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
-    record.save()
-    return HttpResponse("Success!")
+    try:
+        record.save()
+        return HttpResponse("0")
+    except:
+        return HttpResponse("1")
 
 
 @csrf_exempt
@@ -197,8 +202,11 @@ def createGroupForm(request):
     group_email = request.POST.get('group_email')
     fee = request.POST.get('fee')
     record = UniGroups(group_name=group_name, group_owner=group_owner, group_email=group_email, fee=fee)
-    record.save()
-    return HttpResponse("Success!")
+    try:
+        record.save()
+        return HttpResponse("0")
+    except:
+        return HttpResponse("1")
 
 
 def dictfetchall(cursor):
