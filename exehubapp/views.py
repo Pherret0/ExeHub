@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from django.db import connection
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from .forms import *
+import base64
 import hashlib
 
 # Define the web app views
@@ -25,7 +29,11 @@ def cat(request):
     """
     View to display the cat.html template.
     """
-    return render(request, 'cat.html')
+    image = Posts.objects.get(post_id=69)
+    with open(image.image, "rb") as image_file:
+        image = base64.b64encode(image_file.read()).decode('utf-8')
+    context = {'image':image}
+    return render(request, 'cat.html', context)
 
 
 def profile(request):
@@ -58,12 +66,37 @@ def addEvent(request):
     View to display the addevent.html template.
     """
 
+
+    if request.method == 'POST':
+        try:
+            image = request.FILES['image']
+        except:
+            image=""
+
+        post_name = request.POST['post_name']
+        start = request.POST['start']
+        end = request.POST['end']
+        description = request.POST['description']
+        attendees_min = request.POST['attendees_min']
+        attendees_max = request.POST['attendees_max']
+        location = request.POST['location']
+        type = request.POST['type']
+
+        form = DocumentForm(request.POST, request.FILES)
+        record = Posts(post_name = post_name, start=start, end=end, description = description, attendees_min=attendees_min,
+                       attendees_max=attendees_max,location=location, type=type,
+                       group=UniGroups.objects.get(group_id=1), image=image )
+        record.save()
+
+    else:
+        form = DocumentForm()
+
     # Get all of users groups
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM uni_groups")
         data = dictfetchall(cursor)
         context = {
-            'data': data
+            'data': data, 'form': form
         }
 
     return render(request, 'addevent.html', context)
@@ -186,52 +219,6 @@ def addUser(request):
 
     return HttpResponse("Success!")
 
-
-@csrf_exempt
-def createEvent(request):
-    """
-    Function to request the data from the create
-    event form and save to the database.
-    """
-
-    # Get entered data from form
-    type = request.POST.get('type')
-    name = request.POST.get('event_name')
-    description = request.POST.get('description')
-    owner = Users.objects.get(user_id=1)
-
-    # Get the group object from the Model using the
-    # group selected in the form
-    group_input = request.POST.get('group')
-    group = UniGroups.objects.get(group_name=group_input)
-
-    if type == "event":
-        start = request.POST.get('start')
-        end = request.POST.get('end')
-        location = request.POST.get('location')
-        min_attendees = request.POST.get('attendees_min')
-        max_attendees = request.POST.get('attendees_max')
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, start=start,
-                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees, type=type)
-
-    elif type == "text":
-        type = 'default';
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, type=type)
-
-    elif type =="image":
-        type = 'default';
-        image = request.POST.get('image')
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, image=image, type=type)
-
-    else:
-        return HttpResponse(1)
-
-
-    try:
-        record.save()
-        return HttpResponse(0)
-    except:
-        return HttpResponse(1)
 
 
 @csrf_exempt

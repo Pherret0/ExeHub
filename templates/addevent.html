@@ -16,87 +16,83 @@
         <p>Please join an existing group, or create your own to create a new post.</p>
     {% else %}
         <div id="form_container">
-
             <div id="post_type">
                 <button class ="post_type_button" id="text_button" onclick="showTextForm()" style="background-color: rgba(108, 163, 247, 1); color:white;">Text</button>
                 <button class ="post_type_button" id="event_button" onclick="showEventForm()">Event</button>
                 <button class ="post_type_button" id="image_button" onclick="showImageForm()">Image</button>
             </div>
 
-
-            <form name="event" id="eventForm" method="post" action="" >
+        <form method="post"  enctype="multipart/form-data" id="eventForm">
+         {% csrf_token %}
                 <div id ="name_section" >
                     <br>
                     <label for="event_name">Title *</label>
                     <br>
-                    <input type="text" id="event_name" name="event_name" class="unfilled" maxlength="48" required>
+                     {{ form.post_name }}
                 </div>
 
                 <div id ="start_section" style="display:none">
                     <label for="start">Event Start Time *</label>
                     <br>
-                    <input type="datetime-local" id="start" name="start" required>
+                     {{ form.start }}
                     <br>
                 </div>
 
                 <div id ="end_section" style="display:none">
                     <label for="end">Event End Time *</label>
                     <br>
-                    <input type="datetime-local" id="end" name="end" required >
+                     {{ form.end }}
                     <br>
                 </div>
 
                 <div id ="location_section" style="display:none">
                     <label for="location" >Location *</label>
                     <br>
-                    <input type="text" id="location" name="location" maxlength="198">
+                     {{ form.location }}
                     <br>
                 </div>
 
                 <div id ="description_section">
                     <label for="description">Description *</label>
                     <br>
-                    <textarea id="description" name="description" rows="4" cols="50" required maxlength="2000"></textarea>
+                     {{ form.description }}
                     <br>
                 </div>
 
-                <div id ="attendees_min_section" style="display:none">
+                <div id ="attendees_min_section" style="display:none" value=0>
                     <label for="attendees_min">Minimum Attendees</label>
                     <br>
-                    <input type="number" id="attendees_min" name="attendees_min" value=0>
+                     {{ form.attendees_min }}
                     <br>
                 </div>
 
-                <div id ="attendees_max_section" style="display:none">
+                <div id ="attendees_max_section" style="display:none" value=0>
                     <label for="attendees_max">Maximum Attendees</label>
                     <br>
-                    <input type="number" id="attendees_max" name="attendees_max" value=0 >
+                     {{ form.attendees_max }}
                     <br>
                 </div>
 
                 <div id ="image_section" style="display:none" >
-                    <label for="image">Image *</label>
+                    <label for="image">Image</label>
                     <br>
-                    <input type="file" id="image" name="image">
+                     {{ form.image }}
                     <br>
                 </div>
 
                 <label>Group *</label>
                 <br>
-
-                <select id ="group" name="group">
-                    {% for row in data %}
-                        <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
-                    {% endfor %}
-                </select>
+                {{ form.group }}
                 <br>
 
-                <input type="text" id="type" name="type" value="text" style="display:none">
+               {{ form.type }}
 
-                <input type="submit" name="submit" id="submit" class="submit" value="Post">
+                <input type="submit" id="submit">
 
                 <br><br><br>
             </form>
+
+
         </div>
     {% endif %}
 {% endblock %}

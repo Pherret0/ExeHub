@@ -25,7 +25,6 @@ urlpatterns = [
 
     # Post URL Patterns
     path('addevent/', views.addEvent, name='addevent'),
-    path('addevent/create/', views.createEvent, name='createEvent'),
     path('events/', views.viewAllEvents, name='events'),
 
     # Profile URL Patterns

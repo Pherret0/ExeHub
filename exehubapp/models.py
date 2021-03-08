@@ -54,7 +54,7 @@ class Posts(models.Model):
     attendees_min = models.PositiveSmallIntegerField(blank=True, null=True)
     attendees_max = models.PositiveSmallIntegerField(blank=True, null=True)
     type = models.CharField(max_length=7)
-    image = models.TextField(blank=True, null=True)
+    image = models.FileField(blank=True, null=True, upload_to="post_images/")
     parent = models.PositiveIntegerField(blank=True, null=True)
     upvote = models.IntegerField(blank=True, null=True)
 
