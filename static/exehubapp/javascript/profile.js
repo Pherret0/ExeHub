@@ -1,11 +1,8 @@
 <!-- Created By Jack -->
-$(document).ready(function()
-{
+$(document).ready(function(){
     $('#update_email').submit(function(e) {
-
         e.preventDefault();
-        $.ajax(
-        {
+        $.ajax({
             type: 'POST',
             url: 'updateemail/',
             data: $(this).serialize(),
@@ -22,17 +19,15 @@ $(document).ready(function()
     });
 
     $('#update_password').submit(function(e) {
-
         e.preventDefault();
-        $.ajax(
-        {
+        $.ajax({
             type: 'POST',
             url: 'updatepassword/',
             data: $(this).serialize(),
             success: function(response){
                 if (response == 0){
                     alert("Password Updated");
-                } else if (response == 2) {
+                }else if (response == 2) {
                     alert("Incorrect Current Password, Please Try Again");
                 } else
                 {
@@ -43,10 +38,8 @@ $(document).ready(function()
     });
 
     $('#delete_account').submit(function(e) {
-
         e.preventDefault();
-        $.ajax(
-        {
+        $.ajax({
             type: 'POST',
             url: 'deleteaccount/',
             data: $(this).serialize(),

@@ -1,7 +1,6 @@
-<!-- Created By Kai -->
+<!-- Created By Kai & Jack-->
 $(document).ready(function(){
     $('#register').submit(function (e) {
-        alert("Sending...")
         e.preventDefault();
         $.ajax({
             type: 'POST',
@@ -37,16 +36,14 @@ $(document).ready(function(){
     }
 });
 
+// Check whether form is valid and ready to be submitted
 var interval = 400;
 var timer = window.setInterval(function(){
-    // your code goes here ...
     if(document.getElementById("register").checkValidity()){
         document.getElementById("submit").style.border = "2px solid green";
     }else{
         document.getElementById("submit").style.border = "2px solid red";
     }
-
-
 }, interval);
 
 function verifyUniqueEmail() {
@@ -63,7 +60,6 @@ function verifyUniqueEmail() {
             } else {
                 document.getElementById("duplicate_user").style.display="block";
                 document.getElementById("email").setCustomValidity("Invalid field.");
-
             }
         }
     });

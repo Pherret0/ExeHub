@@ -10,7 +10,7 @@
 {% block title %} New Post {% endblock %}
 
 {% block content %}
-    <h1>New Post:</h1>
+    <h1>Make a New Post</h1>
 
     {% if not data %}
         <p>Please join an existing group, or create your own to create a new post.</p>
@@ -30,7 +30,6 @@
                     <label for="event_name">Title *</label>
                     <br>
                     <input type="text" id="event_name" name="event_name" class="unfilled" maxlength="48" required>
-
                 </div>
 
                 <div id ="start_section" style="display:none">
@@ -64,14 +63,14 @@
                 <div id ="attendees_min_section" style="display:none">
                     <label for="attendees_min">Minimum Attendees</label>
                     <br>
-                    <input type="number" id="attendees_min" name="attendees_min">
+                    <input type="number" id="attendees_min" name="attendees_min" value=0>
                     <br>
                 </div>
 
                 <div id ="attendees_max_section" style="display:none">
                     <label for="attendees_max">Maximum Attendees</label>
                     <br>
-                    <input type="number" id="attendees_max" name="attendees_max" >
+                    <input type="number" id="attendees_max" name="attendees_max" value=0 >
                     <br>
                 </div>
 
@@ -85,28 +84,20 @@
                 <label>Group *</label>
                 <br>
 
-
-
-
-
-
                 <select id ="group" name="group">
-                        {% for row in data %}
-                            <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
-                         {% endfor %}
-
-
+                    {% for row in data %}
+                        <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
+                    {% endfor %}
                 </select>
                 <br>
 
-                <input type="text" id="type" name="type" value="" style="display:none">
+                <input type="text" id="type" name="type" value="text" style="display:none">
 
                 <input type="submit" name="submit" id="submit" class="submit" value="Post">
 
                 <br><br><br>
-
             </form>
-
         </div>
     {% endif %}
 {% endblock %}
+

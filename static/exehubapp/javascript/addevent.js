@@ -1,7 +1,7 @@
 <!-- Created By Travis -->
 $(document).ready(function(){
+    // AJAX call to save post
     $('#eventForm').submit(function (e) {
-        alert("Sending...")
         e.preventDefault();
         $.ajax({
             type: 'POST',
@@ -10,6 +10,7 @@ $(document).ready(function(){
             success: function(response){
                 if (response == 0){
                     alert("Event created successfully");
+                    window.location.href = "/events";
                 } else{
                     alert("Error creating event");
                 }
@@ -20,12 +21,14 @@ $(document).ready(function(){
     var interval = 400;
     var timer = window.setInterval(function() {
 
+        // Check whether form is valid and ready to be submitted
         if (document.getElementById("eventForm").checkValidity()) {
             document.getElementById("submit").style.border = "2px solid green";
-        } else {
+        }else {
             document.getElementById("submit").style.border = "2px solid red";
         }
 
+        // Check max_attendees is greater than min_attendees
         var min_attendees = document.getElementById("attendees_min").value;
         var max_attendees = document.getElementById("attendees_max").value;
 
@@ -37,6 +40,7 @@ $(document).ready(function(){
             document.getElementById("attendees_max").setCustomValidity("");
         }
 
+        //Check start time is before end time
         var  start = document.getElementById("start").value;
         var end = document.getElementById("end").value;
 
@@ -58,7 +62,7 @@ $(document).ready(function(){
     document.getElementById('end').value = now.toISOString().slice(0,16);
 });
 
-//Functions for displaying the relevant form based.
+//Functions for displaying the relevant form based on post type.
 function showTextForm() {
     document.getElementById("start_section").style.display = "none";
     document.getElementById("start").required = false;
@@ -121,7 +125,6 @@ function showImageForm() {
     document.getElementById("image_button").style.color = "white";
     document.getElementById("image_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
 }
-
 
 
 

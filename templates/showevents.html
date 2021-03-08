@@ -20,11 +20,11 @@
 
         {% for row in data %}
             <tr>
-               <th> {{ row.event_id }} </th>
-               <th> {{ row.event_name }}</th>
+               <th> {{ row.post_id }} </th>
+               <th> {{ row.post_name }}</th>
                <th> {{ row.start }} </th>
                <th> {{ row.location }} </th>
-               <th><a href="/events/{{ row.event_id }}">More Details</a></th>
+               <th><a href="/events/{{ row.post_id }}">More Details</a></th>
            </tr>
 
         {% endfor %}

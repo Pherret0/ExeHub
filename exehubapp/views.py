@@ -75,7 +75,6 @@ def createGroup(request):
     View to display the creategroup.html template.
     """
 
-    # Get user input from HTML form
     return render(request, 'creategroup.html')
 
 
@@ -88,7 +87,7 @@ def viewAllEvents(request):
 
     # Select all the events from the events table
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM events")
+        cursor.execute("SELECT * FROM posts")
         data = dictfetchall(cursor)
         context = {
             'data': data
@@ -96,7 +95,7 @@ def viewAllEvents(request):
     return render(request, 'showevents.html', context)
 
 
-def viewEventDetails(request, event_id):
+def viewEventDetails(request, post_id):
     """
     View to display the event.html template.
     Passes the the context dictionary with data about the individual
@@ -105,7 +104,7 @@ def viewEventDetails(request, event_id):
 
     # Select the event from the events table with corresponding event_id and pass to the event template
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM events WHERE event_id=%s", (event_id,))
+        cursor.execute("SELECT * FROM posts WHERE post_id=%s", (post_id,))
         row = cursor.fetchone()
         if not row:
             # If there is no event with the event_id specified, redirect to the home page.
@@ -199,7 +198,7 @@ def createEvent(request):
     type = request.POST.get('type')
     name = request.POST.get('event_name')
     description = request.POST.get('description')
-    owner = request.POST.get('owner')
+    owner = Users.objects.get(user_id=1)
 
     # Get the group object from the Model using the
     # group selected in the form
@@ -212,18 +211,21 @@ def createEvent(request):
         location = request.POST.get('location')
         min_attendees = request.POST.get('attendees_min')
         max_attendees = request.POST.get('attendees_max')
-        record = Events(event_name=name, description=description, event_owner=owner, group=group, start=start,
-                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees)
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, start=start,
+                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees, type=type)
 
     elif type == "text":
-        record = Events(event_name=name, description=description, event_owner=owner, group=group)
+        type = 'default';
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, type=type)
 
     elif type =="image":
+        type = 'default';
         image = request.POST.get('image')
-        record = Events(event_name=name, description=description, event_owner=owner, group=group, image=image)
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, image=image, type=type)
 
     else:
         return HttpResponse(1)
+
 
     try:
         record.save()
@@ -433,5 +435,3 @@ def deleteAccount(request):
     except:
         #If error in deleting user, return 1
         return HttpResponse(1)
-
-
