@@ -38,4 +38,6 @@ urlpatterns = [
     path('profile/verifyuniqueemail/', views.verifyUniqueEmail, name='verifyuniqueemail'),
     path('profile/deleteaccount/', views.deleteAccount, name='deleteAccount'),
 
+    #Achievements URL Patterns
+    path('achievements/', views.viewAchs, name='achievements'),
 ]

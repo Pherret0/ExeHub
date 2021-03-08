@@ -1,0 +1,29 @@
+<!-- Created By Jack -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+{% endblock %}
+
+{% block title %} View Achievements {% endblock %}
+
+{% block content %}
+    <h1>Achievements</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Requirement</th>
+            <th>Points</th>
+        </tr>
+
+        {% for row in data %}
+            <tr>
+               <th> {{ row.ach_name }}</th>
+               <th> {{ row.requirement }} </th>
+               <th> {{ row.value }} </th>
+           </tr>
+
+        {% endfor %}
+    </table>
+
+{% endblock %}

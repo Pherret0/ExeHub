@@ -96,6 +96,7 @@ def addEvent(request):
         record = Posts(post_name = post_name, start=start, end=end, description = description, attendees_min=attendees_min,
                        attendees_max=attendees_max,location=location, type=type,
                        group=UniGroups.objects.get(group_id=1), image=image )
+        postAch(request);
         record.save()
 
     else:
@@ -173,6 +174,20 @@ def viewGroups(request):
             'data': data
         }
     return render(request, 'showgroups.html', context)
+
+def viewAchs(request):
+    """
+    View to display the showgroups.html template.
+    Passes the the context dictionary with data to be displayed.
+    """
+    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+    return render(request, 'showachs.html', context)
 
 
 def termsConditions(request):
@@ -267,56 +282,6 @@ def validateLogin(request):
     else:
         return HttpResponse(1)
 
-@csrf_exempt
-def createEvent(request):
-    """
-    Function to request the data from the create
-    event form and save to the database.
-    """
-
-    # Get entered data from form
-    type = request.POST.get('type')
-    name = request.POST.get('event_name')
-    description = request.POST.get('description')
-    owner = Users.objects.get(user_id=1)
-
-    # Get the group object from the Model using the
-    # group selected in the form
-    group_input = request.POST.get('group')
-    group = UniGroups.objects.get(group_name=group_input)
-
-    if type == "event":
-        start = request.POST.get('start')
-        end = request.POST.get('end')
-        location = request.POST.get('location')
-        min_attendees = request.POST.get('attendees_min')
-        max_attendees = request.POST.get('attendees_max')
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, start=start,
-                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees, type=type)
-
-    elif type == "text":
-        type = 'default';
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, type=type)
-
-    elif type =="image":
-        type = 'default'
-        image = request.FILES.get('image')
-        print (image)
-
-
-        record = Posts(post_name=name, description=description, post_owner=owner, group=group, image=image, type=type)
-
-    else:
-        return HttpResponse(1)
-
-
-    try:
-        record.save()
-        return HttpResponse(0)
-    except:
-        return HttpResponse(1)
-
-
 
 
 @csrf_exempt
@@ -347,7 +312,7 @@ def createGroupForm(request):
     record = UniGroups(group_name=group_name, group_owner=group_owner_name, group_email=group_email, fee=fee)
 
     # Save the group to the Model
-
+    groupAch(request);
     record.save()
 
     # Return 0 if successful
@@ -520,3 +485,34 @@ def deleteAccount(request):
     except:
         #If error in deleting user, return 1
         return HttpResponse(1)
+
+@csrf_exempt
+def postAch(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements where ach_name = \"Something to Share\"")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+        print(data)
+        if data:
+            print("Found")
+        else:
+            print("Not found")
+            cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Something to Share\", \"Make 1 post\", 10)")
+    return render(request, 'showgroups.html', context)
+
+def groupAch(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements where ach_name = \"United we stand\"")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+        print(data)
+        if data:
+            print("Found")
+        else:
+            print("Not found")
+            cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"United we stand\", \"Make 1 group\", 10)")
+    return render(request, 'showgroups.html', context)
