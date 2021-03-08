@@ -138,9 +138,8 @@ CREATE TABLE `posts` (
   `attendees_min` smallint unsigned DEFAULT NULL,
   `attendees_max` smallint unsigned DEFAULT NULL,
   `type` enum('default','reply','event') NOT NULL,
-  `image` varchar(200),
+  `image` varchar(200) DEFAULT NULL,
   `parent` int unsigned DEFAULT NULL,
-  `upvote` int DEFAULT NULL,
   PRIMARY KEY (`post_id`),
   UNIQUE KEY `event_id` (`post_id`),
   KEY `group_id` (`group_id`),
@@ -154,7 +153,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL,NULL);
+INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -215,6 +214,33 @@ INSERT INTO `uni_groups` VALUES (1,'Biscuit Soc','Steve Smith','UoEBiscuits',925
 UNLOCK TABLES;
 
 --
+-- Table structure for table `upvotes`
+--
+
+DROP TABLE IF EXISTS `upvotes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `upvotes` (
+  `user_id` int unsigned NOT NULL,
+  `post_id` int unsigned NOT NULL,
+  PRIMARY KEY (`user_id`,`post_id`),
+  UNIQUE KEY `user_id` (`user_id`),
+  UNIQUE KEY `post_id` (`post_id`),
+  CONSTRAINT `upvotes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `upvotes_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `upvotes`
+--
+
+LOCK TABLES `upvotes` WRITE;
+/*!40000 ALTER TABLE `upvotes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `upvotes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -258,4 +284,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-08  0:32:42
+-- Dump completed on 2021-03-08 22:08:01
