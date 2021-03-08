@@ -93,7 +93,7 @@ class Users(models.Model):
     date_of_birth = models.DateField()
     email = models.CharField(unique=True, max_length=254)
     irc_username = models.CharField(max_length=9, blank=True, null=True)
-    password_hash = models.CharField(max_length=64)
+    password_hash = models.BinaryField(max_length=64)
     name = models.CharField(max_length=747)
     salt = models.CharField(max_length=16)
     pic = models.ForeignKey(Pics, models.DO_NOTHING, blank=True, null=True)
