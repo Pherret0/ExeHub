@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import *
+from exehubapp.models import *
 from django.db import connection
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .forms import *
+from exehubapp.forms import *
 import base64
 import hashlib
 
@@ -29,10 +29,12 @@ def cat(request):
     """
     View to display the cat.html template.
     """
-    image = Posts.objects.get(post_id=69)
-    with open(image.image, "rb") as image_file:
-        image = base64.b64encode(image_file.read()).decode('utf-8')
-    context = {'image':image}
+    image = Posts.objects.get(post_id=4)
+
+    image =  str(image.image)
+    print(image)
+    context ={'image': image}
+
     return render(request, 'cat.html', context)
 
 
@@ -218,6 +220,57 @@ def addUser(request):
     record.save()
 
     return HttpResponse("Success!")
+
+
+@csrf_exempt
+def createEvent(request):
+    """
+    Function to request the data from the create
+    event form and save to the database.
+    """
+
+    # Get entered data from form
+    type = request.POST.get('type')
+    name = request.POST.get('event_name')
+    description = request.POST.get('description')
+    owner = Users.objects.get(user_id=1)
+
+    # Get the group object from the Model using the
+    # group selected in the form
+    group_input = request.POST.get('group')
+    group = UniGroups.objects.get(group_name=group_input)
+
+    if type == "event":
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+        location = request.POST.get('location')
+        min_attendees = request.POST.get('attendees_min')
+        max_attendees = request.POST.get('attendees_max')
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, start=start,
+                        end=end, location=location, attendees_min=min_attendees, attendees_max=max_attendees, type=type)
+
+    elif type == "text":
+        type = 'default';
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, type=type)
+
+    elif type =="image":
+        type = 'default'
+        image = request.FILES.get('image')
+        print (image)
+
+
+        record = Posts(post_name=name, description=description, post_owner=owner, group=group, image=image, type=type)
+
+    else:
+        return HttpResponse(1)
+
+
+    try:
+        record.save()
+        return HttpResponse(0)
+    except:
+        return HttpResponse(1)
+
 
 
 

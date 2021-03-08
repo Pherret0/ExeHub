@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from exehubapp import views
 
 # Specify URL patterns for each view in the web page.
 

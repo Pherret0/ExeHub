@@ -138,7 +138,7 @@ CREATE TABLE `posts` (
   `attendees_min` smallint unsigned DEFAULT NULL,
   `attendees_max` smallint unsigned DEFAULT NULL,
   `type` enum('default','reply','event') NOT NULL,
-  `image` longblob,
+  `image` varchar(200),
   `parent` int unsigned DEFAULT NULL,
   `upvote` int DEFAULT NULL,
   PRIMARY KEY (`post_id`),
