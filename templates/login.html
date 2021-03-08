@@ -1,0 +1,33 @@
+<!-- Created By Georgia -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/login.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
+{% endblock %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+    <h1>Login:</h1>
+    <div id="form_container">
+        <form name="login" id="login" method="post" action="">
+
+            <label for="email">Email</label>
+            <br>
+            <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onfocusout="verifyUniqueEmail()"  required>
+            <br>
+
+            <label for="password">Password</label>
+            <br>
+            <input type="password" id="password" name="password" required  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+            <br>
+
+            <input type="submit" name="submit" id="submit" value="Submit">
+        </form>
+
+    </div>
+
+{% endblock %}
+

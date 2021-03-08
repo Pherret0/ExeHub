@@ -8,6 +8,8 @@ from django.shortcuts import render
 from exehubapp.forms import *
 import base64
 import hashlib
+import random
+import string
 
 # Define the web app views
 
@@ -37,11 +39,17 @@ def cat(request):
 
     return render(request, 'cat.html', context)
 
-
+@csrf_exempt
 def profile(request):
     """
     View to display the profile.html template.
     """
+
+    if request.method=="POST":
+        del request.session['user_id']
+        return render(request, 'login.html')
+
+
     return render(request, 'profile.html')
 
 
@@ -207,20 +215,57 @@ def addUser(request):
     email = request.POST.get('email')
     dob = request.POST.get('dob')
 
-    # Hash the password
     password = request.POST.get('password')
-    hash_sha3_512 = hashlib.new("sha3_512", password.encode())
+
+    # Generate salt
+    salt = ''.join([random.choice(string.ascii_letters) for i in range(16)])
+    salted_password = salt + password
+
+    # Hash the password
+    hash_sha3_512 = hashlib.new("sha3_512", salted_password.encode())
     pswd = hash_sha3_512.digest()
 
     # Concatenate first and last name
     fullName = fname + " " + name
 
     # Save new user to the Model.
-    record = Users(is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd)
+    record = Users(is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd, salt=salt)
     record.save()
 
     return HttpResponse("Success!")
 
+@csrf_exempt
+def validateLogin(request):
+    '''
+    Function to check the user's login data compared to the database
+    '''
+
+    email = request.POST.get('email')
+
+    # Check email is in database
+    if Users.objects.filter(email = email).count() != 0:
+        user = Users.objects.get(email=email)
+
+        # Get the hashed password and salt
+        user_password = user.password_hash
+        user_salt = user.salt
+
+        # Hash user input
+        password = request.POST.get('password')
+        salted_password = user_salt + password
+        hash_sha3_512 = hashlib.new("sha3_512", salted_password.encode())
+        pswd = hash_sha3_512.digest()
+        pswd = bytearray(pswd)
+
+        # Compare user input to password
+        if user_password == pswd:
+            request.session['user_id'] = user.user_id
+            print(request.session['user_id'])
+            return HttpResponse(0)
+        else:
+            return HttpResponse(1)
+    else:
+        return HttpResponse(1)
 
 @csrf_exempt
 def createEvent(request):

@@ -23,6 +23,10 @@ urlpatterns = [
     path('register/addUser/', views.addUser, name='addUser'),
     path('register/verifyuniqueemail/', views.verifyUniqueEmail, name='verifyuniqueemail'),
 
+    # Login URL Patterns
+    path('login/', views.login, name='login'),
+    path('login/validateLogin/', views.validateLogin, name='validateLogin'),
+
     # Post URL Patterns
     path('addevent/', views.addEvent, name='addevent'),
     path('events/', views.viewAllEvents, name='events'),
