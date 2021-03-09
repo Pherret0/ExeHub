@@ -53,9 +53,10 @@ CREATE TABLE `attendees` (
   `event_id` int unsigned NOT NULL,
   PRIMARY KEY (`attendee_id`),
   KEY `event_id` (`event_id`),
+  KEY `attendees_ibfk_1` (`user_id`),
   CONSTRAINT `attendees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `attendees_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,9 +83,10 @@ CREATE TABLE `members` (
   `is_group_admin` tinyint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`member_id`),
   KEY `group_id` (`group_id`),
+  KEY `members_ibfk_1` (`user_id`),
   CONSTRAINT `members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `members_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,10 +144,13 @@ CREATE TABLE `posts` (
   `type` enum('default','reply','event') NOT NULL,
   `image` varchar(200) DEFAULT NULL,
   `parent` int unsigned DEFAULT NULL,
+  `user_id` int unsigned DEFAULT NULL,
   PRIMARY KEY (`post_id`),
   UNIQUE KEY `event_id` (`post_id`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `posts_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -155,7 +160,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL);
+INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,4 +292,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-08 22:08:01
+-- Dump completed on 2021-03-09 20:55:57
