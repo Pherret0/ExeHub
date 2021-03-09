@@ -387,7 +387,7 @@ DROP TABLE IF EXISTS `pics`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pics` (
   `pic_id` int NOT NULL AUTO_INCREMENT,
-  `pic` varchar(200) DEFAULT NULL,
+  `pic` varchar(200) DEFAULT 'static/exehubapp/pfp/default.jpg',
   PRIMARY KEY (`pic_id`),
   UNIQUE KEY `pic_id` (`pic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -568,4 +568,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-09 22:05:43
+-- Dump completed on 2021-03-09 22:12:18
