@@ -13,8 +13,10 @@
     <div id="feed">
         {% for row in data %}
             <div class="post" id={{ row.post_id }}>
-                <div class="post_name">
-                    <p> {{ row.post_name }}</p>
+                <div class="post_details">
+                    <img class="poster_pfp"> {{ row.poster_pfp }}</img>
+                    <p class="poster_name"> {{ row.post_owner }}</p>
+                    <p class="post_name"> {{ row.post_name }}</p>
                 </div>
                 <div class="post_content">
                     {% if row.type == 'default' %} <!-- Text and image posts -->

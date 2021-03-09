@@ -31,19 +31,18 @@ $(document).ready(function(){
             data: {post_id: post_id},
             dataType: "json",
             success: function(response) {
-                alert("Response!")
-                if (response == 0) {
-                    let upvote =  $(this).siblings().children('.count');
-                    if (upvote.text() == 'None') {
-                        upvote.nodeValue = 1;
-                    } else {
-                        let num = upvote.text();
-                        num++;
-                        upvote.text(num);
-                        $(this).children('.upvote_img').attr("src", "{% static 'exehubapp/img/icons/upvote arrow clicked.png' %}");
-                    }
+                alert(response);
+                if (response === -1) {
+                    alert("something went wrong upvoting");
                 }else {
-                alert("something went wrong upvoting");
+                    let upvote = $(this).siblings().children('.count');
+                    upvote.text(response);
+                    if (response === 1) {
+                        alert("Increasing upvote by 1");
+                        $(this).children('.upvote_img').attr('src', 'static/exehubapp/img/icons/post/upvote arrow clicked.png');
+                    } else{
+                        $(this).children('.upvote_img').attr('src', 'static/exehubapp/img/icons/post/upvote arrow wip 1.png');
+                    }
                 }
             }
         });

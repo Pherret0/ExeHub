@@ -109,7 +109,7 @@ class Users(models.Model):
 
 
 class Upvotes(models.Model):
-    user_id = models.ForeignKey('Users', models.DO_NOTHING)
+    user_id = models.ForeignKey('Users', models.DO_NOTHING, primary_key=True)
     post_id = models.ForeignKey('Posts', models.DO_NOTHING)
 
     class Meta:

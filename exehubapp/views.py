@@ -46,10 +46,18 @@ def index(request):
         cursor.execute("SELECT * FROM posts")
         data = dictfetchall(cursor)
         print(data)
+
+        for row in data:
+            poster_owner = row['post_owner']
+            user_id = row['user_id']
+            pic_id = Users.objects.get(user_id=user_id).pic
+            pfp = Pics.objects.get(pic_id=pic_id).pic
+            row['poster_pfp'] = pfp
+
         try:
             pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
             pic_url = Pics.objects.get(pic_id=pic_id).pic
-            user_id = request.session['user_id']
+
             context = {
                 'data': data,
                 'user_id': user_id,
@@ -137,12 +145,13 @@ def addEvent(request):
         location = request.POST['location']
         type = request.POST['type']
 
+
         postAch(request)
         form = DocumentForm(request.POST, request.FILES, user_id=user_id)
         record = Posts(post_name=post_name, start=start, end=end,
                        description=description, attendees_min=attendees_min,
                        attendees_max=attendees_max, location=location, type=type,
-                       group=UniGroups.objects.get(group_id=1), image=image)
+                       group=UniGroups.objects.get(group_id=1), image=image, user_id=user_id)
 
         postAch(request)
         record.save()
@@ -286,6 +295,7 @@ def viewAchs(request):
             'data': data
         }
     return render(request, 'showachs.html', context)
+
 
 def termsConditions(request):
     """
@@ -666,36 +676,41 @@ def upvote(request):
     """
     post_id = request.POST.get('post_id')
     user_id = request.session['user_id']
-    print(post_id)
-    print(user_id)
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM upvotes WHERE user_id = %s AND post_id = %s", (user_id, post_id))
+            data = dictfetchall(cursor)
+            print(data)
+        # Posts.objects.filter(post_id=id).update(upvote=F('upvote') + 1)
+        if data:
+            # user has already upvoted
+            print("User has upvoted")
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", post_id)
+                data = cursor.fetchall()
+                upvote_num = data[0][0]
+                cursor.execute("DELETE FROM upvotes WHERE user_id = %s AND post_id = %s ", (user_id, post_id))
+            upvote_num -= 1
+            print("Changing upvote by -1")
+            return HttpResponse(upvote_num)
 
-    # Posts.objects.filter(post_id=id).update(upvote=F('upvote') + 1)
-    if Upvotes.objects.filter(post_id=post_id, user_id=user_id):
-        # user has already upvoted
-        print("User has upvoted")
-        upvote_num = Posts.objects.get(post_id=post_id).upvote
-        upvote_num = upvote_num - 1
-        Posts.objects.filter(post_id=post_id).update(upvote=upvote_num)
-        Upvotes.objects.get(post_id=post_id).delete()
-
-        # user has not upvoted
-        print("User has not upvoted yet")
-        upvote_num = Posts.objects.get(post_id=post_id).upvote
-        record = Upvotes(post_id=post_id, user_id=user_id)
-        record.save()
-        if upvote is not None:
-            # if upvote count exists
-            upvote_num = upvote_num + 1
         else:
-            upvote_num = 1
-        Posts.objects.filter(post_id=post_id).update(upvote=upvote_num)
+            # user has not upvoted
+            print("User has not upvoted yet")
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", post_id)
+                data = cursor.fetchall()
+                upvote_num = data[0][0]
+                cursor.execute("INSERT INTO upvotes VALUES (%s, %s)", (user_id, post_id))
+            upvote_num += 1
+            print("Changing upvote by + 1")
+            return HttpResponse(upvote_num)
 
-        print("Success")
-        # If update successful, return 0
-        return HttpResponse(0)
-        # If update unsuccessful, return 1
+    # If update successful, return 0
+# If update unsuccessful, return 1
+    except Exception:
         print("Fail")
-        return HttpResponse(1)
+        return HttpResponse(-1)
 
 
 @csrf_exempt

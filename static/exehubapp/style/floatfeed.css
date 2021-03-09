@@ -96,3 +96,11 @@ button{
 .upvote_img:hover{
 
 }
+
+.post_details{
+    display: inline-block;
+    margin: 0;
+}
+.poster_name{
+    width: 100%;
+}
