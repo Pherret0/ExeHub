@@ -8,15 +8,15 @@ urlpatterns = [
 
     # URL Patterns
     path('', views.index, name='index'),
-    path('cat/', views.cat, name='cat'),
     path('events/<int:post_id>', views.viewEventDetails, name='event'),
     path('termsconditions/', views.termsConditions, name='termsConditions'),
 
-    # Group URL Patterns
-    path('creategroup/', views.createGroup, name='createGroup'),
-    path('creategroup/create/', views.createGroupForm, name='createGroupForm'),
-    path('creategroup/verifyunique/', views.verifyUniqueGroup, name='verifyUniqueGroup'),
+    # Groups URL Patterns
     path('groups/', views.viewGroups, name='groups'),
+    path('groups/create/', views.createGroupForm, name='createGroupForm'),
+    path('groups/verifyunique/', views.verifyUniqueGroup, name='verifyUniqueGroup'),
+    path('groups/join/<int:group_id>', views.joinGroup, name='joinGroup'),
+    path('groups/delete/<int:group_id>', views.leaveGroup, name='leaveGroup'),
 
     # Register URL Patterns
     path('register/', views.register, name='register'),

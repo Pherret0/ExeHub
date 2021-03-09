@@ -4,14 +4,13 @@ $(document).ready(function() {
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: 'create/',
+            url: '/groups/create/',
             data: $(this).serialize(),
             success: function(response){
                 if (response == 0){
-                    alert("Group created successfully");
-                    window.location.href = "/";
+                    window.location.href = "/groups";
                 } else{
-                    alert("Duplicate group");
+                    alert("Error creating group, please try again");
                 }
             }
         });
@@ -23,7 +22,7 @@ function verifyUniqueGroup() {
     var groupName = document.getElementById("group_name").value;
     $.ajax({
         type: 'POST',
-        url: 'verifyunique/',
+        url: '/groups/verifyunique/',
         data: {groupName: groupName},
         dataType: "json",
         success: function (response) {
