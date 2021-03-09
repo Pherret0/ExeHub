@@ -63,19 +63,6 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def cat(request):
-    """
-    View to display the cat.html template.
-    """
-    image = Posts.objects.get(post_id=5)
-
-    image = str(image.image)
-    print(image)
-    context = {'image': image}
-
-    return render(request, 'cat.html', context)
-
-
 @csrf_exempt
 def profile(request):
     """
@@ -239,6 +226,20 @@ def viewEventDetails(request, post_id):
     return render(request, 'event.html', context)
 
 
+def getViewGroupsData(request):
+    user = Users.objects.get(user_id=request.session['user_id'])
+    members = Members.objects.filter(user=user).values_list('group')
+    group_list = []
+    for i in members:
+        group_list.append(i[0])
+
+    groups = UniGroups.objects.all().exclude(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
+                                                                                  'group_email')
+    in_groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
+                                                                              'group_email')
+    return {'outgroups': groups, 'ingroups': in_groups}
+
+
 def viewGroups(request):
     """
     View to display the showgroups.html template.
@@ -246,12 +247,28 @@ def viewGroups(request):
     """
     # Select all the events from the events table and save them into a dictionary,
     # pass to the showevents template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM uni_groups")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
+
+    context = getViewGroupsData(request)
+    return render(request, 'showgroups.html', context)
+
+
+def joinGroup(request, group_id):
+    group = UniGroups.objects.get(group_id=group_id)
+    user = Users.objects.get(user_id=request.session['user_id'])
+    member_record = Members(user=user, group=group, is_group_admin=0)
+    member_record.save()
+
+    context = getViewGroupsData(request)
+    return render(request, 'showgroups.html', context)
+
+
+def leaveGroup(request, group_id):
+    group = UniGroups.objects.get(group_id=group_id)
+    user = Users.objects.get(user_id=request.session['user_id'])
+    instance = Members.objects.get(group=group, user=user)
+    instance.delete()
+
+    context = getViewGroupsData(request)
     return render(request, 'showgroups.html', context)
 
 
@@ -269,7 +286,6 @@ def viewAchs(request):
             'data': data
         }
     return render(request, 'showachs.html', context)
-
 
 def termsConditions(request):
     """

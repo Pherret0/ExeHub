@@ -1,31 +1,84 @@
-<!-- Created By Jack -->
+<!-- Created by James -->
 {% extends "base.html" %}
 {% load static %}
 
 {% block links %}
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/creategroup.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
 {% endblock %}
 
-{% block title %} View Groups {% endblock %}
+{% block title %} Groups {% endblock %}
 
 {% block content %}
-    <h1>Groups</h1>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Owner</th>
-            <th>E-mail</th>
-            <th>Fee</th>
-        </tr>
 
-        {% for row in data %}
+    <div id="first">
+        <h1>Join an existing group</h1>
+
+        <table style="display:block">
             <tr>
-               <th> {{ row.group_name }}</th>
-               <th> {{ row.group_owner }} </th>
-               <th> {{ row.group_email }} </th>
-               <th> {{ row.fee }} </th>
-           </tr>
+                <th>Name</th>
+                <th>E-mail</th>
+                <th>Fee</th>
+                <th>Join</th>
+            </tr>
 
-        {% endfor %}
-    </table>
+            {% for row in outgroups %}
+                <tr>
+                    <th> {{ row.1 }}</th>
+                    <th> {{ row.3 }} </th>
+                    <th> {{ row.2 }} </th>
+                    <th> {{ row.0 }} </th>
+                    <th><button><a href="/groups/join/{{ row.0 }}">Join</a></button></th>
+               </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+    <div id="second">
+        <h1>Create a new group</h1>
+        <div id="form_container">
+            <form name="uni_groups" id="uni_groups" method="post" action="">
+            <label for="group_name">Group Name*</label>
+            <br>
+            <input type="text" id="group_name" name="group_name" onfocusout="verifyUniqueGroup()"  required>
+            <br>
+            <p id ="duplicate_group" style="display:none">Group already exists</p>
+
+            <input type="hidden" id="group_owner" name="group_owner" value=1>
+            <label for="group_email">Group E-mail</label>
+            <br>
+            <input type="text" id="group_email" name="group_email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+            <br>
+            <label for="fee">Fee</label>
+            <br>
+            <input type="number" step="0.01" id="fee" name="fee">
+            <br>
+            <input type="submit" name="submit" id="submit" value="Submit">
+        </form>
+    </div>
+    <div id="third">
+        <h1>My Groups</h1>
+        {%  if not ingroups %}
+            <p>You are not in any groups. Either join an existing group or make your own!</p>
+        {% else %}
+            <table style="display:table";>
+                <tr>
+                    <th>Group Name</th>
+                    <th>Group Email Address</th>
+                    <th>Fee</th>
+                </tr>
+                {% for row in ingroups %}
+                    <tr>
+                        <th> {{ row.0 }}</th>
+                        <th> {{ row.2 }}</th>
+                        <th> {{ row.1 }}</th>
+                        <th><button><a href="/groups/delete/{{ row.0 }}">Leave</a></button></th>
+                   </tr>
+                {% endfor %}
+             </table>
+        {% endif %}
+
+    </div>
+
 
 {% endblock %}
