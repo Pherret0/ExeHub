@@ -62,7 +62,7 @@ $(document).ready(function() {
 //Functions for displaying the relevant form based on post type.
 function showTextForm() {
     document.getElementById("event_button").style.backgroundColor = "transparent";
-    document.getElementById("text_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
+    document.getElementById("text_button").style.backgroundColor = "rgb(108,163,247)";
     document.getElementById("text_button").style.color = "white";
     document.getElementById("event_button").style.color = "black";
     document.getElementById("image_button").style.color = "black";
@@ -83,7 +83,7 @@ function showTextForm() {
 }
 
 function showEventForm() {
-    document.getElementById("event_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
+    document.getElementById("event_button").style.backgroundColor = "rgb(108,163,247)";
     document.getElementById("text_button").style.color = "black";
     document.getElementById("event_button").style.color = "white";
     document.getElementById("image_button").style.color = "black";

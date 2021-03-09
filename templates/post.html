@@ -3,14 +3,13 @@
 {% load static %}
 
 {% block links %}
-    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/floatfeed.css' %}">
-    <script type="text/javascript" src="{% static 'exehubapp/javascript/feed.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/post.css' %}">
 {% endblock %}
 
-{% block title %} Welcome to ExeHub {% endblock %}
+{% block title %} View Post {% endblock %}
 
 {% block content %}
-    <div id="feed">
+        <div id="feed">
         {% for row in data %}
             <div class="post" id={{ row.post_id }}>
                 <div class="post_name">
@@ -47,17 +46,17 @@
                     {% endif %}
                 </div>
 
-                <div class="icons">
-                    <div class="upvote_div">
-                        <div class="upvote_count">
+                <div id="icons">
+                    <div id="upvote_div">
+                        <div id="upvote_count">
                             <p class="count"> {{ row.upvote }} </p>
                         </div>
-                        <button class="upvote">
-                            <img class="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
+                        <button id="upvote">
+                            <img id="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
                         </button>
                     </div>
-                    <button class="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
-                    <button class="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
+                    <button id="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
+                    <button id="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
                 </div>
                 <div class="post_comments">
                     <div class="view_comments">
@@ -73,18 +72,5 @@
                 </div>
             </div>
         {% endfor %}
-    </div>
-
-    <div id="filter_bar">
-        <select id="group_select" name="group_select">
-            {% for row in data %}
-                <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-
-    <div id="pop_out_post">
-        <p>Hello!</p>
     </div>
 {% endblock %}

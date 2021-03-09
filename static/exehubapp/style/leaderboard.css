@@ -1,0 +1,27 @@
+#content{
+    display: block;
+}
+
+#before_table{
+    width: 100%;
+    height: auto;
+    flex-grow: 0;
+}
+
+#table_div{
+    width: 100%;
+    flex-grow: 5;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+table{
+    margin: 10%;
+    border-collapse: collapse;
+    width: 75%;
+    border-radius: 5px;
+}
+th{
+    height: 50px;
+}

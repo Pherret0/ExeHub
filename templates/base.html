@@ -4,31 +4,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/style.css' %}">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="icon" href="{% static 'exehubapp/img/exehub icon.png' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/float.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&family=Lato&display=swap" rel="stylesheet">
     <script type="text/javascript" src="{% static 'exehubapp/javascript/jquery-3.5.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/main.js' %}"></script>
     {% block links %}
     {% endblock %}
     <title>{% block title %} ExeHub {% endblock %}</title>
 </head>
     <body>
     <div id="header">
-        <div id="navbar">
-        <img id="logo" src="{% static 'exehubapp/img/exehub with hat2.5.png' %}">
-            {% block navbar %}
-                <a href="/">Home</a>
-                <a href="/addevent">New Post</a>
+        <nav>
+            <ul>
+                <li id="logoLi"><a href="/"><img id="logo" src="{% static 'exehubapp/img/exehub with hat3.png' %}" alt="Home"></a></li>
+                <li id="postLi"><a href="/addevent"><img id="post" src="{% static 'exehubapp/img/icons/newpost1.png' %}" alt="Create Post"></a></li>
                 <a href="/events">All Events</a>
                 <a href="/admin">Admin</a>
-                <a href="/creategroup">Create Group</a>
                 <a href="/groups">All Groups</a>
+                <li id="groupLi"><a href="/creategroup"><img id="group" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a></li>
                 <a href="/achievements">Achievements</a>
                 <a href="/register">Register</a>
                 <a href="/login">Log In</a>
-                <a href="/cat">Cat</a> <!-- To be removed -->
-            {% endblock %}
-        </div>
+                <li id="leaderLi"><a href="/leaderboard"><img id="leader" src="{% static 'exehubapp/img/icons/leaderboard icon wip1 with numbers cropped.png' %}" alt="Leaderboard"></a></li>
+                <li id="dropdown"><button id="menu"><img id="menubutton" src=" {% static 'exehubapp/img/icons/menu icon.png' %}" alt="Menu"></button>
+                    <div id="dropdownlinks">
+                        <a href="/addevent"><img id="droppost" src="{% static 'exehubapp/img/icons/newpost1.png' %}" alt="Create Post"></a>
+                        <a href="/creategroup"><img id="dropgroup" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a>
+                        <a href="/leaderboard"><img id="dropleader" src="{% static 'exehubapp/img/icons/leaderboard icon wip1 with numbers cropped.png' %}" alt="Leaderboard"></a>
+                    </div>
+                </li>
+                {% if user_id %}
+                    {{ pfp }}
+                    <li><a href="/profile"><img id="pfp" src="{{ pfp }}" alt="Profile"></a></li>
+
+                {% else %}
+                    <li> <a href="/login">Log In</a></li>
+                {% endif %}
+            </ul>
+        <!--<div id="pics">
+            <img id="pfp" src="{% static 'exehubapp/img/icons/pfp border.png' %}">
+        </div> -->
+        </nav>
     </div>
     <div id="content">
         {% block content %}

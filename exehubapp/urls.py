@@ -11,6 +11,11 @@ urlpatterns = [
     path('cat/', views.cat, name='cat'),
     path('events/<int:post_id>', views.viewEventDetails, name='event'),
     path('termsconditions/', views.termsConditions, name='termsConditions'),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('post/<int:post_id>', views.post, name='post'),
+    path('upvote/', views.upvote, name='upvote'),
+
+    path('test/', views.test, name='test'),
 
     # Group URL Patterns
     path('creategroup/', views.createGroup, name='createGroup'),

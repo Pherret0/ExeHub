@@ -4,7 +4,7 @@ $(document).ready(function(){
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: 'validateLogin/',
+            url: '/login/validateLogin/',
             data: $(this).serialize(),
             success: function(response){
                 if (response == 0){

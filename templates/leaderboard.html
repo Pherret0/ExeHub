@@ -1,0 +1,29 @@
+<!-- Created By Travis -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/leaderboard.css' %}">
+{% endblock %}
+
+{% block title %}ExeHub Leaderboard{% endblock %}
+
+{% block content %}
+    <div id="before_table"><h1>Welcome to the leaderboard</h1></div>
+    <div id="table_div">
+        <table id="leaderboard_table">
+            <tr>
+                <th>Place</th>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
+            {% for row in data %}
+               <tr>
+                    <th>  {{ forloop.counter }}  </th>
+                    <th>  {{ row.Name }}  </th>
+                    <th>  {{ row.Points }}  </th>
+               </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

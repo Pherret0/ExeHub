@@ -1,3 +1,4 @@
 .idea
 ExeHub/__pycache__
 exehubapp/__pycache__
+/static/exehubapp/post_images/

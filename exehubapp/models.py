@@ -92,17 +92,6 @@ class UniGroups(models.Model):
     def __str__(self):
         return self.group_name
 
-
-class Upvotes(models.Model):
-    user = models.OneToOneField('Users', models.DO_NOTHING)
-    post = models.OneToOneField(Posts, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'upvotes'
-        unique_together = (('user', 'post'),)
-
-
 class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     is_server_admin = models.PositiveIntegerField()
@@ -117,3 +106,12 @@ class Users(models.Model):
     class Meta:
         managed = False
         db_table = 'users'
+
+
+class Upvotes(models.Model):
+    user_id = models.ForeignKey('Users', models.DO_NOTHING)
+    post_id = models.ForeignKey('Posts', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'upvotes'

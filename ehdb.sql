@@ -93,7 +93,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,1,1,1),(2,2,1,0),(3,2,2,1);
+INSERT INTO `members` VALUES (1,1,1,1),(2,2,1,0);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,9 +223,10 @@ DROP TABLE IF EXISTS `upvotes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `upvotes` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
   `post_id` int unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`post_id`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   UNIQUE KEY `post_id` (`post_id`),
   CONSTRAINT `upvotes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
