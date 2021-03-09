@@ -12,8 +12,29 @@
 {% block content %}
     <div>
         <h1>Profile</h1>
-        <p>Hello (insert name here)!</p>
+        <p>Hello {{ user.name }}!</p>
+
         <h1>Your groups:</h1>
+        <p>You are a member of the following groups on ExeHub</p>
+
+        {%  if not groups %}
+            <p>You are not in any groups. Either join an existing group or make your own!</p>
+        {% else %}
+            <table style="display:table";>
+                <tr>
+                    <th>Group Name</th>
+                    <th>Group Email Address</th>
+                    <th>Fee</th>
+                </tr>
+                {% for row in groups %}
+                    <tr>
+                        <th> {{ row.0 }}</th>
+                        <th> {{ row.2 }}</th>
+                        <th> {{ row.1 }}</th>
+                   </tr>
+                {% endfor %}
+             </table>
+        {% endif %}
 
         <h1>Change Email:</h1>
         <form name="update_email" id="update_email" method="post" action="">
@@ -44,11 +65,12 @@
         </form>
 
         <h1>Delete Account:</h1>
+        <p>You will not be able to recover your account once deleted</p>
         <form name="delete_account" id="delete_account" method="post" action="">
             <label for="password">Confirm Password *</label><br>
             <input type="password" id="password" name="password" required>
             <input type="hidden" id="user_id" name="user_id" value=1><br>
-            <input type="submit" value="Confirm Delete" name="submit" id="submit">
+            <input type="submit" value="Confirm Delete" name="submit_delete" id="submit_delete">
         </form>
         <br><br><br>
 

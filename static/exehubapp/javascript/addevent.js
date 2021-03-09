@@ -1,14 +1,18 @@
 <!-- Created By Travis -->
-$(document).ready(function(){
+$(document).ready(function() {
+
+
+    document.getElementById("start").setAttribute("type", "datetime-local");
+    document.getElementById("end").setAttribute("type", "datetime-local");
 
 
     var interval = 400;
-    var timer = window.setInterval(function() {
+    var timer = window.setInterval(function () {
 
         // Check whether form is valid and ready to be submitted
         if (document.getElementById("eventForm").checkValidity()) {
             document.getElementById("submit").style.border = "2px solid green";
-        }else {
+        } else {
             document.getElementById("submit").style.border = "2px solid red";
         }
 
@@ -16,22 +20,22 @@ $(document).ready(function(){
         var min_attendees = document.getElementById("attendees_min").value;
         var max_attendees = document.getElementById("attendees_max").value;
 
-        if (min_attendees > max_attendees){
+        if (min_attendees > max_attendees) {
             document.getElementById("attendees_min").setCustomValidity("Invalid field.");
             document.getElementById("attendees_max").setCustomValidity("Invalid field.");
-        }else{
+        } else {
             document.getElementById("attendees_min").setCustomValidity("");
             document.getElementById("attendees_max").setCustomValidity("");
         }
 
         //Check start time is before end time
-        var  start = document.getElementById("start").value;
+        var start = document.getElementById("start").value;
         var end = document.getElementById("end").value;
 
-        if (start > end){
+        if (start > end) {
             document.getElementById("start").setCustomValidity("Invalid field.");
             document.getElementById("end").setCustomValidity("Invalid field.");
-        }else{
+        } else {
 
             document.getElementById("start").setCustomValidity("");
             document.getElementById("end").setCustomValidity("");
@@ -42,9 +46,17 @@ $(document).ready(function(){
     //and current time + 1 hour.
     var now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('start').value = now.toISOString().slice(0,16);
-    now.setHours(now.getHours()+1);
-    document.getElementById('end').value = now.toISOString().slice(0,16);
+    document.getElementById('start').value = now.toISOString().slice(0, 16);
+    now.setHours(now.getHours() + 1);
+    document.getElementById('end').value = now.toISOString().slice(0, 16);
+
+
+    let noGroups = document.getElementById("id_group").length;
+
+    if (noGroups == 1) {
+        document.getElementById("no_groups").style.display = "block";
+        document.getElementById("form_container").style.display = "none";
+    }
 });
 
 //Functions for displaying the relevant form based on post type.
@@ -121,6 +133,9 @@ function showImageForm() {
     document.getElementById("image_button").style.color = "white";
     document.getElementById("image_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
 }
+
+
+
 
 
 

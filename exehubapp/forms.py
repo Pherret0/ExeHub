@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import DateInput
+from .models import *
 
 from .models import Posts
 
@@ -59,6 +60,12 @@ class DocumentForm(forms.ModelForm):
     )
 
 
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop('user_id')
+        self.groups = Members.objects.filter(user = self.user_id)
+
+        super(DocumentForm, self).__init__(*args, **kwargs)
+        self.fields['group'].queryset = self.groups
 
     class Meta:
         model = Posts

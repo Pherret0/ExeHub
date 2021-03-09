@@ -46,6 +46,7 @@ $(document).ready(function(){
             success: function(response){
                 if (response == 0){
                     alert("Account Deleted");
+                    window.location.replace('/login/')
                 } else if (response == 2) {
                     alert("Incorrect Password, Please Try Again");
                 }else{
@@ -109,6 +110,12 @@ var timer = window.setInterval(function() {
         document.getElementById("submit_pass").style.border = "2px solid green";
     } else {
         document.getElementById("submit_pass").style.border = "2px solid red";
+    }
+
+    if (document.getElementById("delete_account").checkValidity()) {
+        document.getElementById("submit_delete").style.border = "2px solid green";
+    } else {
+        document.getElementById("submit_delete").style.border = "2px solid red";
     }
 }, interval);
 

@@ -7,8 +7,7 @@ $(document).ready(function(){
             url: 'addUser/',
             data: $(this).serialize(),
             success: function(response){
-                alert("Registered successfully!");
-                window.location.href = "/";
+                window.location.href = "/login/";
             }
         });
    });

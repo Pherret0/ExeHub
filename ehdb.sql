@@ -48,9 +48,10 @@ DROP TABLE IF EXISTS `attendees`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `attendees` (
+  `attendee_id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
   `event_id` int unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`event_id`),
+  PRIMARY KEY (`attendee_id`),
   KEY `event_id` (`event_id`),
   CONSTRAINT `attendees_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `attendees_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -63,7 +64,7 @@ CREATE TABLE `attendees` (
 
 LOCK TABLES `attendees` WRITE;
 /*!40000 ALTER TABLE `attendees` DISABLE KEYS */;
-INSERT INTO `attendees` VALUES (1,2);
+INSERT INTO `attendees` VALUES (1,1,2);
 /*!40000 ALTER TABLE `attendees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,10 +76,11 @@ DROP TABLE IF EXISTS `members`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `members` (
+  `member_id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int unsigned NOT NULL,
   `group_id` int unsigned NOT NULL,
   `is_group_admin` tinyint unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`user_id`,`group_id`),
+  PRIMARY KEY (`member_id`),
   KEY `group_id` (`group_id`),
   CONSTRAINT `members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `members_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `uni_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -91,7 +93,7 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,1,1),(2,1,0),(2,2,1);
+INSERT INTO `members` VALUES (1,1,1,1),(2,2,1,0),(3,2,2,1);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 

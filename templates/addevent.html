@@ -12,10 +12,13 @@
 {% block content %}
     <h1>Make a New Post</h1>
 
-    {% if not data %}
-        <p>Please join an existing group, or create your own to create a new post.</p>
-    {% else %}
+        <div id="no_groups" style="display:none">
+            <p>Please join an existing group, or create your own to create a new post.</p>
+            <p><a href="/groups">Join a Group</a></p>
+            <p><a href="/creategroup">Create a Group</a></p>
+        </div>
         <div id="form_container">
+
             <div id="post_type">
                 <button class ="post_type_button" id="text_button" onclick="showTextForm()" style="background-color: rgba(108, 163, 247, 1); color:white;">Text</button>
                 <button class ="post_type_button" id="event_button" onclick="showEventForm()">Event</button>
@@ -94,6 +97,6 @@
 
 
         </div>
-    {% endif %}
+
 {% endblock %}
 

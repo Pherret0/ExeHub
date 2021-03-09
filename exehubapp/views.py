@@ -31,7 +31,7 @@ def cat(request):
     """
     View to display the cat.html template.
     """
-    image = Posts.objects.get(post_id=4)
+    image = Posts.objects.get(post_id=5)
 
     image =  str(image.image)
     print(image)
@@ -49,8 +49,18 @@ def profile(request):
         del request.session['user_id']
         return render(request, 'login.html')
 
+    user = Users.objects.get(user_id=request.session['user_id'])
+    members = Members.objects.filter(user=user).values_list('group')
+    group_list =[]
+    for i in members:
+        group_list.append(i[0])
 
-    return render(request, 'profile.html')
+
+    groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_name', 'fee', 'group_email')
+
+    context = {'user': user, 'groups':groups}
+
+    return render(request, 'profile.html', context)
 
 
 @csrf_exempt
@@ -75,7 +85,8 @@ def addEvent(request):
     """
     View to display the addevent.html template.
     """
-
+    user_id = request.session['user_id']
+    user = Users.objects.get(user_id=user_id)
 
     if request.method == 'POST':
         try:
@@ -92,15 +103,28 @@ def addEvent(request):
         location = request.POST['location']
         type = request.POST['type']
 
-        form = DocumentForm(request.POST, request.FILES)
-        record = Posts(post_name = post_name, start=start, end=end, description = description, attendees_min=attendees_min,
+        form = DocumentForm(request.POST, request.FILES, user_id=user_id)
+        record = Posts(post_name = post_name, start=start, end=end,
+                       description = description, attendees_min=attendees_min,
                        attendees_max=attendees_max,location=location, type=type,
                        group=UniGroups.objects.get(group_id=1), image=image )
-        postAch(request);
+
+        postAch(request)
         record.save()
+        id = record.post_id
+
+        try:
+            user = Users.objects.get(user=user)
+        except:
+            user=""
+
+        if type == "event" and user!="":
+            event = Posts.objects.get(post_id=id)
+            attendee_record = Attendees(user=user, event=event)
+            attendee_record.save()
 
     else:
-        form = DocumentForm()
+        form = DocumentForm(user_id = user_id)
 
     # Get all of users groups
     with connection.cursor() as cursor:
@@ -146,7 +170,8 @@ def viewEventDetails(request, post_id):
     event to be displayed in the template.
     """
 
-    # Select the event from the events table with corresponding event_id and pass to the event template
+    # Select the event from the events table with corresponding event_id
+    # and pass to the event template
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts WHERE post_id=%s", (post_id,))
         row = cursor.fetchone()
@@ -166,7 +191,8 @@ def viewGroups(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
-    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    # Select all the events from the events table and save them into a dictionary,
+    # pass to the showevents template
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM uni_groups")
         data = dictfetchall(cursor)
@@ -180,7 +206,8 @@ def viewAchs(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
-    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    # Select all the events from the events table and save them into a
+    # dictionary, pass to the showevents template
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM achievements")
         data = dictfetchall(cursor)
@@ -206,9 +233,11 @@ def verifyUser(request, email, password_hash):
     details are valid.
     """
 
-    # Select all the events from the events table and save them into a dictionary, pass to the showevents template
+    # Select all the events from the events table and save them into a dictionary,
+    # pass to the showevents template
     with connection.cursor() as cursor:
-        cursor.execute("SELECT email,password_hash FROM users WHERE email=%s AND password_hash=%s",
+        cursor.execute("SELECT email,password_hash FROM users "
+                       "WHERE email=%s AND password_hash=%s",
                        (email, password_hash,))
         data = dictfetchall(cursor)
         if data:
@@ -244,16 +273,17 @@ def addUser(request):
     fullName = fname + " " + name
 
     # Save new user to the Model.
-    record = Users(is_server_admin=False, date_of_birth=dob, email=email, name=fullName, password_hash=pswd, salt=salt)
+    record = Users(is_server_admin=False, date_of_birth=dob, email=email,
+                   name=fullName, password_hash=pswd, salt=salt)
     record.save()
 
     return HttpResponse("Success!")
 
 @csrf_exempt
 def validateLogin(request):
-    '''
+    """
     Function to check the user's login data compared to the database
-    '''
+    """
 
     email = request.POST.get('email')
 
@@ -296,24 +326,29 @@ def createGroupForm(request):
     group_email = request.POST.get('group_email')
     fee = request.POST.get('fee')
 
-    # Get the user id from the hidden input field
-    group_owner_id = request.POST.get('group_owner')
-
-    # Get the user object
-    owner = Users.objects.get(user_id=group_owner_id)
-
-    # Get the user name and use for group owner
-    group_owner_name = owner.name
+    # Get the owner of the group using the session variable
+    try:
+        group_owner = Users.objects.get(user_id = request.session['user_id'])
+        group_owner_name = group_owner.name
+    except:
+        # If not logged in set owner name to empty string
+        group_owner = ""
+        group_owner_name = ""
 
     # If no fee is entered, set fee to 0
     if fee == "":
         fee = 0
 
-    record = UniGroups(group_name=group_name, group_owner=group_owner_name, group_email=group_email, fee=fee)
+    record = UniGroups(group_name=group_name, group_owner=group_owner_name,
+                       group_email=group_email, fee=fee)
 
     # Save the group to the Model
-    groupAch(request);
+    groupAch(request)
     record.save()
+
+    group = UniGroups.objects.get(group_name=group_name)
+    member_record = Members(user=group_owner, group=group, is_group_admin=1)
+    member_record.save()
 
     # Return 0 if successful
     return HttpResponse(0)
@@ -388,14 +423,15 @@ def updateEmail(request):
     before updating their email address in the Model.
     """
 
+    # Get password stored in db
+    user = Users.objects.get(user_id=request.session['user_id'])
+    salt = user.salt
+    correct_password = user.password_hash
+
     # Get form data submitted
     email = request.POST.get('email')
     password = request.POST.get('password')
-
-    # Get the password of the user stored in the db.
-    user_id = request.POST.get('user_id')
-    user = Users.objects.get(user_id=user_id)
-    correct_password = user.password_hash
+    password = salt + password
 
     # Hash the password the user entered in the form.
     hashed_entered_password = hashlib.new("sha3_512", password.encode())
@@ -409,7 +445,7 @@ def updateEmail(request):
 
     # Update users email in the Model.
     try:
-        Users.objects.filter(user_id=user_id).update(email=email)
+        Users.objects.filter(user_id=request.session['user_id']).update(email=email)
 
         # Return 0 if update successful
         return HttpResponse(0)
@@ -425,14 +461,16 @@ def updatePassword(request):
     before updating their password in the Model.
     """
 
+    # Get password stored in db
+    user = Users.objects.get(user_id=request.session['user_id'])
+    salt = user.salt
+    stored_password = user.password_hash
+
     # Get entered data from form
     current_password = request.POST.get('current_password')
+    current_password = salt + current_password
     new_password = request.POST.get('new_password')
-
-    # Get the current user object from the Model
-    user_id = request.POST.get('user_id')
-    user = Users.objects.get(user_id=user_id)
-    stored_password = user.password_hash
+    new_password = salt + new_password
 
     # Get the hash of the entered current password
     hashed_current_password = hashlib.new("sha3_512", current_password.encode())
@@ -450,7 +488,7 @@ def updatePassword(request):
 
     # Update the users password
     try:
-        Users.objects.filter(user_id=user_id).update(password_hash=new_password_hashed)
+        Users.objects.filter(user_id=request.session['user_id']).update(password_hash=new_password_hashed)
         # If update successful, return 0
         return HttpResponse(0)
     except:
@@ -462,16 +500,19 @@ def deleteAccount(request):
     """
     Function to delete a user account
     """
+
+    # Get password stored in db
+    user = Users.objects.get(user_id=request.session['user_id'])
+    salt = user.salt
+    stored_password = user.password_hash
+
     # Hash entered password
     password = request.POST.get('password')
+    password = salt + password
     hashed_password = hashlib.new("sha3_512", password.encode())
     hashed_password = hashed_password.digest()
     hashed_password = bytearray(hashed_password)
 
-    # Get password stored in db
-    user_id = request.POST.get('user_id')
-    user = Users.objects.get(user_id=user_id)
-    stored_password = user.password_hash
 
     # Check entered password is correct
     if hashed_password != stored_password:
@@ -481,6 +522,7 @@ def deleteAccount(request):
     try:
         # If user deleted successfully, return 0
         user.delete()
+        del request.session['user_id']
         return HttpResponse(0)
     except:
         #If error in deleting user, return 1

@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Achievements(models.Model):
     ach_id = models.AutoField(unique=True, primary_key=True)
     ach_name = models.CharField(max_length=64)
@@ -13,6 +12,7 @@ class Achievements(models.Model):
 
 
 class Attendees(models.Model):
+    attendee_id = models.AutoField(primary_key=True, unique=True)
     user = models.ForeignKey('Users', models.DO_NOTHING)
     event = models.ForeignKey('Posts', models.DO_NOTHING)
 
@@ -23,6 +23,7 @@ class Attendees(models.Model):
 
 
 class Members(models.Model):
+    member_id = models.AutoField(primary_key = True, unique=True)
     user = models.ForeignKey('Users', models.DO_NOTHING)
     group = models.ForeignKey('UniGroups', models.DO_NOTHING)
     is_group_admin = models.PositiveIntegerField()
@@ -31,6 +32,9 @@ class Members(models.Model):
         managed = False
         db_table = 'members'
         unique_together = (('user', 'group'),)
+
+    def __str__(self):
+        return self.group.group_name
 
 
 class Pics(models.Model):
@@ -56,7 +60,6 @@ class Posts(models.Model):
     type = models.CharField(max_length=7)
     image = models.FileField(blank=True, null=True, upload_to="static/exehubapp/post_images")
     parent = models.PositiveIntegerField(blank=True, null=True)
-    upvote = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -85,6 +88,19 @@ class UniGroups(models.Model):
     class Meta:
         managed = False
         db_table = 'uni_groups'
+
+    def __str__(self):
+        return self.group_name
+
+
+class Upvotes(models.Model):
+    user = models.OneToOneField('Users', models.DO_NOTHING)
+    post = models.OneToOneField(Posts, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'upvotes'
+        unique_together = (('user', 'post'),)
 
 
 class Users(models.Model):
