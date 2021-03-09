@@ -134,7 +134,7 @@ DROP TABLE IF EXISTS `pics`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pics` (
   `pic_id` int NOT NULL AUTO_INCREMENT,
-  `pic` mediumblob NOT NULL,
+  `pic` varchar(200) DEFAULT 'static/exehubapp/pfp/default.jpg',
   PRIMARY KEY (`pic_id`),
   UNIQUE KEY `pic_id` (`pic_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -305,7 +305,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary '\é§T†sjU\n\ôş¨a\â7ƒÄ¥U P”\Ş\áÜ¢\öŠş¤œÃ¥\æ\ê¥!1Mo°T¡F\è(/5ÿ.chÁ¦.—','John Doe','',NULL),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'j‚\èBV2…C“\çª\áK\ô¢t|§Š&3@R‰Ø­‰\â\Ãa|„œn‚Ş«ˆ¦µ¹·Ÿ\Z¸JŸK0\\-¼û@2hAS','Steve Smith','',NULL);
+INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary 'ï¿½Tï¿½sjU\nï¿½ï¿½ï¿½aï¿½7ï¿½Ä¥Uï¿½Pï¿½ï¿½ï¿½Ü¢ï¿½ï¿½ï¿½ï¿½ï¿½Ã¥','John Doe','',NULL),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'jï¿½ï¿½BV2ï¿½Cï¿½ï¿½ï¿½Kï¿½ï¿½t|ï¿½ï¿½&3@Rï¿½Ø­ï¿½ï¿½ï¿½a|\ï¿','Steve Smith','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -318,4 +318,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-09 22:29:01
+-- Dump completed on 2021-03-09 23:07:08
