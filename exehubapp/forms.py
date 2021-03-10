@@ -59,12 +59,11 @@ class DocumentForm(forms.ModelForm):
         widget=forms.FileInput(attrs={'id': 'image'}),
     )
 
-
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.pop('user_id')
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM members WHERE user_id=%s", (str(self.user_id)), )
+            cursor.execute("SELECT * FROM members WHERE user_id=%s", (self.user_id,))
             data = cursor.fetchall()
 
         group_list = []

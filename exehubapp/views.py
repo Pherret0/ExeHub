@@ -10,78 +10,12 @@ from .forms import *
 import base64
 import hashlib
 import json
-from django.db.models import F
-import base64
-
 import random
 import string
 
-from django.contrib.auth.decorators import login_required
-
 
 # Define the web app views
-def getProfile(request):
-    try:
-        pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
-        print(pic_id)
-        if not pic_id:
-
-            pic_url = "static/exehubapp/pfp/default.png"
-        else:
-            pic_url = Pics.objects.get(pic_id=pic_id).pic
-
-        return pic_url
-
-    except:
-        return " "
-
-
-@csrf_exempt
-def index(request):
-    """
-    View to display the index.html template.
-    Passes the the context dictionary with data to be displayed.
-    """
-
-    try:
-        id = request.session['user_id']
-    except:
-        return render(request, 'login.html')
-
-    if request.POST.get("filter"):
-        group_name = request.POST.get("group_select")
-        group_name = str(group_name)
-
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))  # getting posts
-            data = cursor.fetchone()  # putting it int a dict
-            group_id = data[0]
-
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))  # getting posts
-            data = dictfetchall(cursor)  # putting it int a dict
-    else:
-        with connection.cursor() as cursor:
-            user = Users.objects.get(user_id=request.session['user_id'])
-            members = Members.objects.filter(user=user).values_list('group')
-
-            group_list = []
-            for i in members:
-                group_list.append(i[0])
-
-            print("groups:")
-            print(group_list)
-
-            cursor.execute("SELECT * FROM posts")
-            data = dictfetchall(cursor)  # putting it int a dict
-            new_data = []
-            for i in data:
-                print(i)
-                if i['group_id'] in group_list:
-                    new_data.append(i)
-
-            data = new_data
-
+def formatPosts(data):
     for row in data:
         user_id = row['user_id']
 
@@ -93,41 +27,76 @@ def index(request):
 
         else:
             pic_id = Users.objects.get(user_id=user_id).pic_id
-            if not pic_id:
-                pic_url = "static/exehubapp/pfp/default.png"
-            else:
-                pic_url = Pics.objects.get(pic_id=pic_id).pic
+            pic_url = Pics.objects.get(pic_id=pic_id).pic
 
         row['poster_pfp'] = pic_url
+    return data
 
-    groups = UniGroups.objects.all()
-    for i in groups:
-        print(i)
+
+@csrf_exempt
+def index(request):
+    """
+    View to display the index.html template.
+    Passes the the context dictionary with data to be displayed.
+    """
 
     try:
-        # pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
-        # pic_url = Pics.objects.get(pic_id=pic_id).pic
-
-        pic_url = getProfile(request)
-
-        if pic_url == " ":
-            context = {
-                'data': data,
-                'groups': groups,
-            }
-        else:
-            user_id = request.session['user_id']
-            context = {
-                'data': data,
-                'groups': groups,
-                'user_id': user_id,
-                'pfp': pic_url,
-            }
-
+        user_id = request.session['user_id']
     except:
-        context = {
-            'data': data,
-        }
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM posts WHERE group_id=1")  # getting posts
+            data = dictfetchall(cursor)  # putting it int a dict
+            data = formatPosts(data)
+            context = {
+                'data': data,
+            }
+        return render(request, 'index.html', context)
+
+    if request.POST.get("filter"):
+        group_name = request.POST.get("group_select")
+        if group_name=="query_all_groups":
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM posts") # getting posts
+                data = dictfetchall(cursor)  # putting it int a dict
+        else:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))  # getting posts
+                data = cursor.fetchone()  # putting it int a dict
+                group_id = data[0]
+
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))  # getting posts
+                data = dictfetchall(cursor)  # putting it int a dict
+    else:
+        with connection.cursor() as cursor:
+            user = Users.objects.get(user_id=user_id)
+            members = Members.objects.filter(user=user).values_list('group')
+            group_list = []
+            for i in members:
+                group_list.append(i[0])
+
+            cursor.execute("SELECT * FROM posts")
+            data = dictfetchall(cursor)  # putting it int a dict
+
+        new_data = []
+        for i in data:
+            if i['group_id'] in group_list:
+                new_data.append(i)
+
+        data = new_data
+
+    data = formatPosts(data)
+    groups = UniGroups.objects.all()
+    pic_url = getProfile(request)
+    user_id = request.session['user_id']
+    context = {
+        'data': data,
+        'groups': groups,
+        'user_id': user_id,
+        'pfp': pic_url,
+    }
+
+
     return render(request, 'index.html', context)
 
 
@@ -138,7 +107,7 @@ def profile(request):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -151,13 +120,13 @@ def profile(request):
         record = Pics(pic=image)
         record.save()
         pic_id = record.pic_id
-        user = Users.objects.get(user_id=request.session['user_id'])
+        user = Users.objects.get(user_id=user_id)
         user.pic_id = pic_id
         user.save()
     else:
         form = ProfilePicForm()
 
-    user = Users.objects.get(user_id=request.session['user_id'])
+    user = Users.objects.get(user_id=user_id)
     members = Members.objects.filter(user=user).values_list('group')
 
     group_list = []
@@ -167,15 +136,10 @@ def profile(request):
     groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_name', 'fee', 'group_email')
 
     pic_url = getProfile(request)
-
-    if pic_url == " ":
-        context = {'user': user, 'groups': groups, 'form': form}
-    else:
-
-        user_id = request.session['user_id']
-        context = {'user': user, 'groups': groups, 'form': form,
-                   'user_id': user_id,
-                   'pfp': pic_url, }
+    user_id = request.session['user_id']
+    context = {'user': user, 'groups': groups, 'form': form,
+               'user_id': user_id,
+               'pfp': pic_url, }
 
     return render(request, 'profile.html', context)
 
@@ -204,11 +168,10 @@ def addEvent(request):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
-    user_id = request.session['user_id']
     user = Users.objects.get(user_id=user_id)
     post_owner = user.name
 
@@ -255,6 +218,8 @@ def addEvent(request):
             attendee_record = Attendees(user=user, event=event)
             attendee_record.save()
 
+        return redirect('/')
+
     else:
         form = DocumentForm(user_id=user_id)
 
@@ -264,18 +229,10 @@ def addEvent(request):
         data = dictfetchall(cursor)
 
         pic_url = getProfile(request)
-
-        if pic_url == " ":
-
-            context = {
-                'data': data, 'form': form
-            }
-        else:
-
-            user_id = request.session['user_id']
-            context = {'data': data, 'form': form,
-                       'user_id': user_id,
-                       'pfp': pic_url}
+        user_id = request.session['user_id']
+        context = {'data': data, 'form': form,
+                   'user_id': user_id,
+                   'pfp': pic_url}
 
         return render(request, 'addevent.html', context)
 
@@ -287,7 +244,7 @@ def createGroup(request):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -302,7 +259,7 @@ def viewAllEvents(request):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -311,15 +268,9 @@ def viewAllEvents(request):
         cursor.execute("SELECT * FROM posts")
         data = dictfetchall(cursor)
 
-        pic_url = getProfile(request)
-
-        if pic_url == " ":
-            context = {'data': data}
-        else:
-
-            user_id = request.session['user_id']
-            context = {'data': data, 'user_id': user_id,
-                       'pfp': pic_url}
+    pic_url = getProfile(request)
+    context = {'data': data, 'user_id': user_id,
+               'pfp': pic_url}
 
     return render(request, 'showevents.html', context)
 
@@ -332,7 +283,7 @@ def viewEventDetails(request, post_id):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -354,9 +305,10 @@ def viewEventDetails(request, post_id):
 
 def getViewGroupsData(request):
     user = Users.objects.get(user_id=request.session['user_id'])
+    user_id = str(user.user_id)
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM members WHERE user_id=%s", (str(user.user_id)), )
+        cursor.execute("SELECT * FROM members WHERE user_id=%s", (user_id,) )
         data = cursor.fetchall()
 
     group_list = []
@@ -369,18 +321,10 @@ def getViewGroupsData(request):
     in_groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
                                                                               'group_email')
 
-    print(in_groups)
-    print(groups)
-
     pic_url = getProfile(request)
-
-    if pic_url == " ":
-        return {'outgroups': groups, 'ingroups': in_groups}
-    else:
-
-        user_id = request.session['user_id']
-        return {'outgroups': groups, 'ingroups': in_groups, 'user_id': user_id,
-                'pfp': pic_url}
+    user_id = request.session['user_id']
+    return {'outgroups': groups, 'ingroups': in_groups, 'user_id': user_id,
+            'pfp': pic_url}
 
 
 def viewGroups(request):
@@ -390,7 +334,7 @@ def viewGroups(request):
     """
 
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -428,21 +372,23 @@ def viewAchs(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
+    try:
+        user_id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
+
     # Select all the events from the events table and save them into a
     # dictionary, pass to the showevents template
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM achievements")
         data = dictfetchall(cursor)
 
-        pic_url = getProfile(request)
+    pic_url = getProfile(request)
 
-        if pic_url == " ":
-            context = {'data': data}
-        else:
 
-            user_id = request.session['user_id']
-            context = {'data': data, 'user_id': user_id,
-                       'pfp': pic_url}
+    user_id = request.session['user_id']
+    context = {'data': data, 'user_id': user_id,
+               'pfp': pic_url}
 
     return render(request, 'showachs.html', context)
 
@@ -455,25 +401,6 @@ def termsConditions(request):
 
 
 # Define functions
-
-@csrf_exempt
-def verifyUser(request, email, password_hash):
-    """
-    Function to check whether the users login
-    details are valid.
-    """
-
-    # Select all the events from the events table and save them into a dictionary,
-    # pass to the showevents template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT email,password_hash FROM users "
-                       "WHERE email=%s AND password_hash=%s",
-                       (email, password_hash,))
-        data = dictfetchall(cursor)
-        if data:
-            return HttpResponse("Success!")
-        else:
-            print("Didn't work")
 
 
 @csrf_exempt
@@ -502,11 +429,19 @@ def addUser(request):
     # Concatenate first and last name
     fullName = fname + " " + name
 
+    pic = Pics(pic="static/exehubapp/pfp/default.png")
+    pic.save()
+    pic_id = pic.pic_id
+
     # Save new user to the Model.
     record = Users(is_server_admin=False, date_of_birth=dob, email=email,
-                   name=fullName, password_hash=pswd, salt=salt)
+                   name=fullName, password_hash=pswd, salt=salt, pic_id=pic_id)
 
     record.save()
+
+    group = UniGroups.objects.get(group_id=1)
+    member_record = Members(user=record, group=group, is_group_admin=0)
+    member_record.save()
 
     return HttpResponse("Success!")
 
@@ -629,13 +564,9 @@ def leaderboard(request):
 
     pic_url = getProfile(request)
 
-    if pic_url == " ":
-        context = {'data': data}
-    else:
-
-        user_id = request.session['user_id']
-        context = {'data': data, 'user_id': user_id,
-                   'pfp': pic_url}
+    user_id = request.session['user_id']
+    context = {'data': data, 'user_id': user_id,
+               'pfp': pic_url}
 
     return render(request, 'leaderboard.html', context)
 
@@ -977,3 +908,10 @@ def groupAch(request):
             cursor.execute(
                 "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"United we stand\", \"Make 1 group\", 10)")
     return render(request, 'showgroups.html', context)
+
+
+def getProfile(request):
+    user_id = request.session['user_id']
+    pic_id = Users.objects.get(user_id=user_id).pic_id
+    pic_url = Pics.objects.get(pic_id=pic_id).pic
+    return pic_url

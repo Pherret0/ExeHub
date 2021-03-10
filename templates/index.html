@@ -15,11 +15,9 @@
 
             <div id="no_groups">
                 <br><br><br>
-                <p>Welcome to ExeHub! To get started join or create a community! You'll then be able to see community posts here</p>
-                <p><a href="/groups">Join/Create a Group</a></p>
-                <p>Already in a group? Things are looking a big sparse. Make your first post below!</p>
-                <p><a href="/addevent">New Post</a></p>
-            <!-- <p><a href="/create">Create a Group</a></p> -->
+                <p>Welcome to ExeHub! Looks a bit sparse here! Start the community by writing a post!</p>
+                <p><a href="/addevent">Make a New Post</a></p>
+
         </div>
 
         {% else %}
@@ -91,10 +89,12 @@
             {% endfor %}
             </div>
 
+
             <div id="filter_bar">
                 <form method="POST">
                 <br><br>
                     <select id="group_select" name="group_select">
+                        <option value="query_all_groups">All</option>
                         {% for row in groups %}
                             <option value ="{{ row }}">{{ row }}</option>
                         {% endfor %}

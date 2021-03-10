@@ -12,7 +12,7 @@
 {% block content %}
 
     <div id="first">
-        <h1>Join an existing group</h1>
+        <h1>Join an existing community</h1>
 
         <table style="display:block">
             <tr>
@@ -35,7 +35,7 @@
         </table>
     </div>
     <div id="second">
-        <h1>Create a new group</h1>
+        <h1>Create a new community</h1>
         <div id="form_container">
             <form name="uni_groups" id="uni_groups" method="post" action="">
             <label for="group_name">Group Name*</label>
@@ -57,9 +57,9 @@
         </form>
     </div>
     <div id="third">
-        <h1>My Groups</h1>
+        <h1>My communities</h1>
         {%  if not ingroups %}
-            <p>You are not in any groups. Either join an existing group or make your own!</p>
+            <p>You are not in any communities. Either join an existing community or make your own!</p>
         {% else %}
             <table style="display:table";>
                 <tr>

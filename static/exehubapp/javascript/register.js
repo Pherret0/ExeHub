@@ -35,14 +35,19 @@ $(document).ready(function(){
     }
 });
 
+var high_date = '2005-01-01';
+var low_date = new Date(1900, 0, 0);
+
 // Check whether form is valid and ready to be submitted
-var interval = 400;
+var interval = 3000;
 var timer = window.setInterval(function(){
     if(document.getElementById("register").checkValidity()){
         document.getElementById("submit").style.border = "2px solid green";
     }else{
         document.getElementById("submit").style.border = "2px solid red";
     }
+    
+
 }, interval);
 
 function verifyUniqueEmail() {
