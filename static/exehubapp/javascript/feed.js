@@ -21,7 +21,6 @@ $(document).ready(function(){
     });
 
     $('#feed').on('click', '.upvote', function (e) {
-        alert("Hello!")
         let post_id = $(this).closest('.post').attr('id');
         e.preventDefault();
         $.ajax({
@@ -31,14 +30,13 @@ $(document).ready(function(){
             data: {post_id: post_id},
             dataType: "json",
             success: function(response) {
-                alert(response);
-                if (response === -1) {
+
+                if (response['votes'] === -1) {
                     alert("something went wrong upvoting");
                 }else {
                     let upvote = $(this).siblings().children('.count');
-                    upvote.text(response);
-                    if (response === 1) {
-                        alert("Increasing upvote by 1");
+                    upvote.text(response['votes']);
+                    if (response['change'] === 1) {
                         $(this).children('.upvote_img').attr('src', 'static/exehubapp/img/icons/post/upvote arrow clicked.png');
                     } else{
                         $(this).children('.upvote_img').attr('src', 'static/exehubapp/img/icons/post/upvote arrow wip 1.png');

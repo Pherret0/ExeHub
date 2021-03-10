@@ -35,6 +35,7 @@ def getProfile(request):
     except:
         return " "
 
+
 @csrf_exempt
 def index(request):
     """
@@ -47,11 +48,9 @@ def index(request):
     except:
         return render(request, 'login.html')
 
-
-
     if request.POST.get("filter"):
         group_name = request.POST.get("group_select")
-        group_name=str(group_name)
+        group_name = str(group_name)
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))  # getting posts
@@ -83,9 +82,6 @@ def index(request):
 
             data = new_data
 
-
-
-
     for row in data:
         user_id = row['user_id']
 
@@ -102,11 +98,9 @@ def index(request):
             else:
                 pic_url = Pics.objects.get(pic_id=pic_id).pic
 
-
         row['poster_pfp'] = pic_url
 
-
-    groups=UniGroups.objects.all()
+    groups = UniGroups.objects.all()
     for i in groups:
         print(i)
 
@@ -240,8 +234,7 @@ def addEvent(request):
         record = Posts(post_name=post_name, start=start, post_owner=post_owner, end=end,
                        description=description, attendees_min=attendees_min, group=group,
                        attendees_max=attendees_max, location=location, type=type,
-                    image=image)
-
+                       image=image)
 
         postAch(request)
         record.save()
@@ -796,7 +789,6 @@ def deleteAccount(request):
         # If password incorrect, return 2
         return HttpResponse(2)
 
-
     # If user deleted successfully, return 0
 
     posts = Posts.objects.filter(user_id=request.session['user_id'])
@@ -809,7 +801,6 @@ def deleteAccount(request):
     user.delete()
     del request.session['user_id']
     return HttpResponse(0)
-
 
 
 @csrf_exempt
@@ -851,43 +842,49 @@ def upvote(request):
     """
     post_id = request.POST.get('post_id')
     user_id = request.session['user_id']
-    try:
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM upvotes WHERE user_id = %s AND post_id = %s", (user_id, post_id))
+        data = dictfetchall(cursor)
+        print(data)
+    # Posts.objects.filter(post_id=id).update(upvote=F('upvote') + 1)
+    if data:
+        # user has already upvoted
+        print("User has upvoted")
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM upvotes WHERE user_id = %s AND post_id = %s", (user_id, post_id))
-            data = dictfetchall(cursor)
+            cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", (post_id,))
+            data = cursor.fetchall()
+            upvote_num = data[0][0]
+            cursor.execute("DELETE FROM upvotes WHERE user_id = %s AND post_id = %s ", (user_id, post_id,))
+        upvote_num = upvote_num - 1
+        print("Changing upvote by -1")
+        context = {'votes': upvote_num,
+                   'change': -1
+                   }
+        return HttpResponse(json.dumps(context), content_type='application/json')
+
+    else:
+        # user has not upvoted
+        print("User has not upvoted yet")
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", (post_id,))
+            data = cursor.fetchall()
             print(data)
-        # Posts.objects.filter(post_id=id).update(upvote=F('upvote') + 1)
-        if data:
-            # user has already upvoted
-            print("User has upvoted")
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", (post_id,))
-                data = cursor.fetchall()
-                upvote_num = data[0][0]
-                cursor.execute("DELETE FROM upvotes WHERE user_id = %s AND post_id = %s ", (user_id, post_id,))
-            upvote_num -= 1
-            print("Changing upvote by -1")
-            return HttpResponse(upvote_num)
+            upvote_num = data[0][0]
+            cursor.execute("INSERT INTO upvotes VALUES (%s, %s)", (user_id, post_id))
+        upvote_num = upvote_num + 1
+        print("Changing upvote by + 1")
+        context= {'votes': upvote_num,
+                  'change': 1
+                  }
+        return HttpResponse(json.dumps(context), content_type='application/json')
 
-        else:
-            # user has not upvoted
-            print("User has not upvoted yet")
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", (post_id,))
-                data = cursor.fetchall()
-                print(data)
-                upvote_num = data[0][0]
-                cursor.execute("INSERT INTO upvotes VALUES (%s, %s)", (user_id, post_id))
-            upvote_num += 1
-            print(upvote_num)
-            print("Changing upvote by + 1")
-            return HttpResponse(upvote_num)
-
-    # If update successful, return 0
-    # If update unsuccessful, return 1
-    except Exception:
+        # If update successful, return 0
+        # If update unsuccessful, return 1
         print("Fail")
-        return HttpResponse(-1)
+        context = {'votes': -1,
+                   'change': 0
+                   }
+        return HttpResponse(json.dumps(context), content_type='application/json')
 
 
 @csrf_exempt

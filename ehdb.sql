@@ -65,7 +65,6 @@ CREATE TABLE `attendees` (
 
 LOCK TABLES `attendees` WRITE;
 /*!40000 ALTER TABLE `attendees` DISABLE KEYS */;
-INSERT INTO `attendees` VALUES (1,1,2);
 /*!40000 ALTER TABLE `attendees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +120,6 @@ CREATE TABLE `members` (
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,1,1,1),(2,2,1,0);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,10 +132,10 @@ DROP TABLE IF EXISTS `pics`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pics` (
   `pic_id` int NOT NULL AUTO_INCREMENT,
-  `pic` varchar(200) DEFAULT 'static/exehubapp/pfp/default.jpg',
+  `pic` varchar(200) DEFAULT 'static/exehubapp.pfp/default.png',
   PRIMARY KEY (`pic_id`),
   UNIQUE KEY `pic_id` (`pic_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +184,6 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (2,'Eating Biscuits','Steve Smith',1,'2021-02-22 09:00:00','2021-02-22 18:00:00','The Guild','I like biscuits!',1,15,'default',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -242,7 +239,7 @@ CREATE TABLE `uni_groups` (
 
 LOCK TABLES `uni_groups` WRITE;
 /*!40000 ALTER TABLE `uni_groups` DISABLE KEYS */;
-INSERT INTO `uni_groups` VALUES (1,'Biscuit Soc','Steve Smith','UoEBiscuits',9250.00,''),(2,'Computer Science Department','Ronaldo Menezes','Computer Science',0.00,'');
+INSERT INTO `uni_groups` VALUES (1,'General Community','Everyone',NULL,1.00,'1');
 /*!40000 ALTER TABLE `uni_groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,8 +254,7 @@ CREATE TABLE `upvotes` (
   `user_id` int unsigned NOT NULL,
   `post_id` int unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`post_id`),
-  UNIQUE KEY `user_id` (`user_id`),
-  UNIQUE KEY `post_id` (`post_id`),
+  KEY `post_id` (`post_id`),
   CONSTRAINT `upvotes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `upvotes_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -304,7 +300,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,1,'1999-01-01','johndoe@example.com','jd123',_binary '�T�sjU\n���a�7�ĥU�P���ܢ�����å','John Doe','',NULL),(2,0,'1952-02-04','thebiscuitbaron@example.com','biscuity',_binary 'j��BV2�C���K��t|��&3@R�ح���a|\�','Steve Smith','',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -317,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-10  1:01:48
+-- Dump completed on 2021-03-10 12:44:55
