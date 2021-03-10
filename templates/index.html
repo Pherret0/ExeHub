@@ -11,84 +11,101 @@
 
 {% block content %}
     <div id="feed">
-        {% for row in data %}
-            <div class="post" id={{ row.post_id }}>
-                <div class="post_details">
-                    <img class="poster_pfp" src="{{ row.poster_pfp }}">
-                    <p class="poster_name"> {{ row.post_owner }}</p>
-                    <p class="post_name"> {{ row.post_name }}</p>
-                </div>
-                <div class="post_content">
-                    {% if row.type == 'default' %} <!-- Text and image posts -->
-                        {% if row.image == None %} <!-- Text posts -->
-                            <div class="post_desc">
-                                <p>{{ row.description }}</p>
-                            </div>
-                        {% else %} <!-- Image posts -->
-                            <div class="post_image_container">
-                                <img class="post_image" src="{{ row.image }}">
-                            </div>
-                            <div class="post_desc">
-                                <p>{{ row.description }}</p>
-                            </div>
-                        {% endif %}
-                    {% else %} <!-- Event posts -->
-                        {% if row.image != None %}
-                            <div class="post_image_container">
-                                <img class="post_image" src="{{ row.image }}">
-                            </div>
-                        {% endif %}
-                        <div class="post_desc">
-                            <p>{{ row.description}}</p>
-                        </div>
-                        <div class="post_time">
-                            <p class="start_time">{{ row.start }}</p>
-                            <p class="end_time">{{ row.end }}</p>
-                        </div>
-                        <div class="Location">
-                            <p>{{ row.location }}</p>
-                        </div>
-                    {% endif %}
-                </div>
+        {%if not data%}
 
-                <div class="icons">
-                    <div class="upvote_div">
-                        <div class="upvote_count">
-                            <p class="count"> {{ row.upvote }} </p>
-                        </div>
-                        <button class="upvote">
-                            <img class="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
-                        </button>
-                    </div>
-                    <button class="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
-                    <button class="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
-                </div>
-                <div class="post_comments">
-                    <div class="view_comments">
-                        <ul>
-                        </ul>
-                    </div>
-                    <!--
-                    <div class="add_comment">
-                        Post a comment
-                        <input type="text" id="add_comment_input" name="add_comment_input">
-                    </div>
-                    -->
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+            <div id="no_groups">
+                <br><br><br>
+                <p>Welcome to ExeHub! To get started join or create a community! You'll then be able to see community posts here</p>
+                <p><a href="/groups">Join/Create a Group</a></p>
+                <p>Already in a group? Things are looking a big sparse. Make your first post below!</p>
+                <p><a href="/addevent">New Post</a></p>
+            <!-- <p><a href="/create">Create a Group</a></p> -->
+        </div>
 
-    <div id="filter_bar">
-        <select id="group_select" name="group_select">
+        {% else %}
             {% for row in data %}
-                <option value ="{{ row.group_name }}">{{ row.group_name }}</option>
+                <div class="post" id={{ row.post_id }}>
+                    <div class="post_details">
+                        <img class="poster_pfp" src="{{ row.poster_pfp }}">
+                        <p class="poster_name"> {{ row.post_owner }}</p>
+                        <p class="post_name"> {{ row.post_name }}</p>
+                    </div>
+                    <div class="post_content">
+                        {% if row.type == 'default' %} <!-- Text and image posts -->
+                            {% if row.image == None %} <!-- Text posts -->
+                                <div class="post_desc">
+                                    <p>{{ row.description }}</p>
+                                </div>
+                            {% else %} <!-- Image posts -->
+                                <div class="post_image_container">
+                                    <img class="post_image" src="{{ row.image }}">
+                                </div>
+                                <div class="post_desc">
+                                    <p>{{ row.description }}</p>
+                                </div>
+                            {% endif %}
+                        {% else %} <!-- Event posts -->
+                            {% if row.image != None %}
+                                <div class="post_image_container">
+                                    <img class="post_image" src="{{ row.image }}">
+                                </div>
+                            {% endif %}
+                            <div class="post_desc">
+                                <p>{{ row.description}}</p>
+                            </div>
+                            <div class="post_time">
+                                <p class="start_time">{{ row.start }}</p>
+                                <p class="end_time">{{ row.end }}</p>
+                            </div>
+                            <div class="Location">
+                                <p>{{ row.location }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="icons">
+                        <div class="upvote_div">
+                            <div class="upvote_count">
+                                <p class="count"> {{ row.upvote }} </p>
+                            </div>
+                            <button class="upvote">
+                                <img class="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
+                            </button>
+                        </div>
+                        <button class="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
+                        <button class="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
+                    </div>
+                    <div class="post_comments">
+                        <div class="view_comments">
+                            <ul>
+                            </ul>
+                        </div>
+                        <!--
+                        <div class="add_comment">
+                            Post a comment
+                            <input type="text" id="add_comment_input" name="add_comment_input">
+                        </div>
+                        -->
+                    </div>
+                </div>
             {% endfor %}
-        </select>
-    </div>
+            </div>
+
+            <div id="filter_bar">
+                <form method="POST">
+                <br><br>
+                    <select id="group_select" name="group_select">
+                        {% for row in groups %}
+                            <option value ="{{ row }}">{{ row }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="Filter" name="filter" id="filter">
+                </form>
+            </div>
 
 
-    <div id="pop_out_post">
-        <p>Hello!</p>
-    </div>
+            <div id="pop_out_post">
+                <p>Hello!</p>
+            </div>
+        {% endif %}
 {% endblock %}

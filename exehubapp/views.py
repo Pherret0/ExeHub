@@ -35,7 +35,7 @@ def getProfile(request):
     except:
         return " "
 
-
+@csrf_exempt
 def index(request):
     """
     View to display the index.html template.
@@ -47,53 +47,93 @@ def index(request):
     except:
         return render(request, 'login.html')
 
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM posts")  # getting posts
-        data = dictfetchall(cursor)  # putting it int a dict
 
-        for row in data:
-            post_owner = row['post_owner']
-            user_id = row['user_id']
 
-            if not user_id:
+    if request.POST.get("filter"):
+        group_name = request.POST.get("group_select")
+        group_name=str(group_name)
 
-                with connection.cursor() as cursor:
-                    cursor.execute("UPDATE posts set user_id=1 where post_id IS NULL")  # getting posts
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))  # getting posts
+            data = cursor.fetchone()  # putting it int a dict
+            group_id = data[0]
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))  # getting posts
+            data = dictfetchall(cursor)  # putting it int a dict
+    else:
+        with connection.cursor() as cursor:
+            user = Users.objects.get(user_id=request.session['user_id'])
+            members = Members.objects.filter(user=user).values_list('group')
+
+            group_list = []
+            for i in members:
+                group_list.append(i[0])
+
+            print("groups:")
+            print(group_list)
+
+            cursor.execute("SELECT * FROM posts")
+            data = dictfetchall(cursor)  # putting it int a dict
+            new_data = []
+            for i in data:
+                print(i)
+                if i['group_id'] in group_list:
+                    new_data.append(i)
+
+            data = new_data
+
+
+
+
+    for row in data:
+        user_id = row['user_id']
+
+        if not user_id:
+
+            with connection.cursor() as cursor:
+                cursor.execute("UPDATE posts set user_id=1 where post_id IS NULL")  # getting posts
+            pic_url = "static/exehubapp/pfp/default.png"
+
+        else:
+            pic_id = Users.objects.get(user_id=user_id).pic_id
+            if not pic_id:
                 pic_url = "static/exehubapp/pfp/default.png"
-
             else:
-                pic_id = Users.objects.get(user_id=user_id).pic_id
-                if not pic_id:
-                    pic_url = "static/exehubapp/pfp/default.png"
-                else:
-                    pic_url = Pics.objects.get(pic_id=pic_id).pic
+                pic_url = Pics.objects.get(pic_id=pic_id).pic
 
 
-            row['poster_pfp'] = pic_url
+        row['poster_pfp'] = pic_url
 
 
-        try:
-            # pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
-            # pic_url = Pics.objects.get(pic_id=pic_id).pic
+    groups=UniGroups.objects.all()
+    for i in groups:
+        print(i)
 
-            pic_url = getProfile(request)
+    try:
+        # pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
+        # pic_url = Pics.objects.get(pic_id=pic_id).pic
 
-            if pic_url == " ":
-                context = {
-                    'data': data,
-                }
-            else:
-                user_id = request.session['user_id']
-                context = {
-                    'data': data,
-                    'user_id': user_id,
-                    'pfp': pic_url,
-                }
+        pic_url = getProfile(request)
 
-        except:
+        if pic_url == " ":
             context = {
                 'data': data,
+                'groups': groups,
             }
+        else:
+            user_id = request.session['user_id']
+            context = {
+                'data': data,
+                'groups': groups,
+                'user_id': user_id,
+                'pfp': pic_url,
+            }
+
+    except:
+        context = {
+            'data': data,
+        }
     return render(request, 'index.html', context)
 
 
@@ -192,13 +232,15 @@ def addEvent(request):
         attendees_max = request.POST['attendees_max']
         location = request.POST['location']
         type = request.POST['type']
+        group_id = request.POST['group']
+        group = UniGroups.objects.get(group_id=group_id)
 
         postAch(request)
         form = DocumentForm(request.POST, request.FILES, user_id=user_id)
         record = Posts(post_name=post_name, start=start, post_owner=post_owner, end=end,
-                       description=description, attendees_min=attendees_min,
+                       description=description, attendees_min=attendees_min, group=group,
                        attendees_max=attendees_max, location=location, type=type,
-                       group=UniGroups.objects.get(group_id=1), image=image)
+                    image=image)
 
 
         postAch(request)
@@ -206,9 +248,6 @@ def addEvent(request):
 
         post_id = record.post_id
         with connection.cursor() as cursor:
-            print("Updating user id")
-            print(user_id)
-            print(post_id)
             cursor.execute("UPDATE posts SET user_id=%s WHERE post_id=%s", (user_id, post_id,))
 
         id = record.post_id
@@ -330,8 +369,6 @@ def getViewGroupsData(request):
     group_list = []
     for i in data:
         group_list.append(i[2])
-
-    print(group_list)
 
     groups = UniGroups.objects.all().exclude(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
                                                                                   'group_email')
