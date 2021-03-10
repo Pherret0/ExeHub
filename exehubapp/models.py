@@ -39,7 +39,7 @@ class Members(models.Model):
 
 class Pics(models.Model):
     pic_id = models.AutoField(primary_key=True)
-    pic = models.FileField(upload_to="static/exehub/pfp")
+    pic = models.FileField(upload_to="static/exehubapp/pfp")
 
     class Meta:
         managed = False

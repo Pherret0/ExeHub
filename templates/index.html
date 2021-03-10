@@ -14,7 +14,7 @@
         {% for row in data %}
             <div class="post" id={{ row.post_id }}>
                 <div class="post_details">
-                    <img class="poster_pfp"> {{ row.poster_pfp }}</img>
+                    <img class="poster_pfp" src="{{ row.poster_pfp }}">
                     <p class="poster_name"> {{ row.post_owner }}</p>
                     <p class="post_name"> {{ row.post_name }}</p>
                 </div>
@@ -25,17 +25,19 @@
                                 <p>{{ row.description }}</p>
                             </div>
                         {% else %} <!-- Image posts -->
-                            <div class="post_image">
-                                <img src="{{ row.image }}">
+                            <div class="post_image_container">
+                                <img class="post_image" src="{{ row.image }}">
                             </div>
                             <div class="post_desc">
                                 <p>{{ row.description }}</p>
                             </div>
                         {% endif %}
                     {% else %} <!-- Event posts -->
-                        <div class="post_image">
-                            <img src="{{ row.image }}">
-                        </div>
+                        {% if row.image != None %}
+                            <div class="post_image_container">
+                                <img class="post_image" src="{{ row.image }}">
+                            </div>
+                        {% endif %}
                         <div class="post_desc">
                             <p>{{ row.description}}</p>
                         </div>

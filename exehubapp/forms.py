@@ -23,7 +23,7 @@ class DocumentForm(forms.ModelForm):
     )
 
     description = forms.CharField(
-        widget=forms.TextInput(attrs={'id': 'description'}),
+        widget=forms.Textarea(attrs={'id': 'description', 'size': 1950, 'maxlength': 1950}),
         required=True,
     )
 

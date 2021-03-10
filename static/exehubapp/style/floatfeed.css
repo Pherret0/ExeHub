@@ -2,30 +2,107 @@
 
 #content{
     display: flex;
+    flex-flow: row nowrap;
 }
 
 #feed{
     display: flex;
     height: auto;
     flex-flow: row wrap;
-    width: 40%;
+    width: 40vw;
+}
+#filter_bar{
+
+}
+p{
+    margin: 10px;
+    padding: 0;
 }
 
 .post {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column;
     background-color: white;
     margin: 3%;
-    min-height: 400px;
-    max-height: 10vh;
+    min-height: 0;
+    min-width: 200px;
+    max-height: 600px;
+    max-width: 600px;
+    /*max-height: 10vh;*/
     width: 100%;
     border: 10px solid #6CA3F7;
     border-radius: 10px;
     padding: 10px;
 }
+.post_details{
+    margin: 0;
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+}
+.poster_pfp{
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border: 2px solid #6CA3F7;
+    border-radius: 15px;
+}
+
+.poster_name{
+    flex: 1;
+}
+.poster_name{
+    flex: 1;
+}
+.post_name{
+    flex: 2;
+}
 
 .post_content{
-    flex-grow: 2;
+    border: 1px solid rgba(57, 84, 128, 0.82);
+    display: flex;
+    flex-flow: column;
+    min-height: 0;
+}
+
+.post_image_container {
+    min-height: 0;
+    flex-grow: 1;
+    max-height: 100%;
+    max-width: 100%;
+}
+/* fixed up to here */
+.post_image{
+    max-width: 100%;
+    max-height: 100%;
+}
+.post_desc{
+
+}
+.icons{
+    margin: 5px;
+}
+.upvote_div{
+    display: flex;
+    font-size: 25px;
+    justify-content: center;
+}
+.upvote_count{
+    margin: 0;
+    padding: 0;
+}
+.upvote{
+    margin: 0;
+    padding: 0;
+}
+.upvote_img{
+
+}
+.comments{
+
+}
+.open{
+
 }
 .post_comments{
     display: flex;
@@ -69,19 +146,6 @@ button{
     overflow: hidden;
     outline: none;
 }
-.upvote_div{
-    display: flex;
-    font-size: 25px;
-    justify-content: center;
-}
-.upvote_count{
-    margin: 0;
-    padding: 0;
-}
-.upvote{
-    margin: 0;
-    padding: 0;
-}
 
 .filter_bar{
     flex-grow: 0;
@@ -91,16 +155,4 @@ button{
     height: 150px;
     width: 200px;
     align-content: center;
-}
-
-.upvote_img:hover{
-
-}
-
-.post_details{
-    display: inline-block;
-    margin: 0;
-}
-.poster_name{
-    width: 100%;
 }
