@@ -5,36 +5,58 @@
 {% block links %}
     <script type="text/javascript" src="{% static 'exehubapp/javascript/creategroup.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/communities.css' %}">
 {% endblock %}
 
 {% block title %} Groups {% endblock %}
 
 {% block content %}
+    <div id="create_join_container">
+        <div id=join_group_container>
+            <h1>Join an existing community</h1>
 
-    <div id="first">
-        <h1>Join an existing community</h1>
-
-        <table style="display:block">
-            <tr>
-                <th>Name</th>
-                <th>E-mail</th>
-                <th>Fee</th>
-                <th>Join</th>
-            </tr>
-
-            {% for row in outgroups %}
+            <table id="join_table">
                 <tr>
-                    <th> {{ row.1 }}</th>
-                    <th> {{ row.3 }} </th>
-                    <th> {{ row.2 }} </th>
-                    <th> {{ row.0 }} </th>
-                    <th><button><a href="/groups/join/{{ row.0 }}">Join</a></button></th>
-               </tr>
+                    <th>Name</th>
+                    <th>E-mail</th>
+                    <th>Fee</th>
+                </tr>
 
-            {% endfor %}
-        </table>
+                {% for row in outgroups %}
+                    <tr>
+                        <th> {{ row.1 }}</th>
+                        <th> {{ row.3 }} </th>
+                        <th> {{ row.2 }} </th>
+                        <th class="join_button"><button><a href="/groups/join/{{ row.0 }}">Join</a></button></th>
+                   </tr>
+
+                {% endfor %}
+            </table>
+        </div>
+        <div id="show_group_container">
+            <h1>My communities</h1>
+            {%  if not ingroups %}
+                <p>You are not in any communities. Either join an existing community or make your own!</p>
+            {% else %}
+                <table id="my_table">
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Group Email Address</th>
+                        <th>Fee</th>
+                    </tr>
+                    {% for row in ingroups %}
+                        <tr>
+                            <th> {{ row.1 }}</th>
+                            <th> {{ row.3}}</th>
+                            <th> {{ row.2 }}</th>
+                            <th class="join_button"><button><a href="/groups/delete/{{ row.0 }}">Leave</a></button></th>
+                       </tr>
+                    {% endfor %}
+                 </table>
+            {% endif %}
+        </div>
     </div>
-    <div id="second">
+    <div id="create_group_container">
         <h1>Create a new community</h1>
         <div id="form_container">
             <form name="uni_groups" id="uni_groups" method="post" action="">
@@ -43,7 +65,6 @@
             <input type="text" id="group_name" name="group_name" onfocusout="verifyUniqueGroup()"  required>
             <br>
             <p id ="duplicate_group" style="display:none">Group already exists</p>
-
             <input type="hidden" id="group_owner" name="group_owner" value=1>
             <label for="group_email">Group E-mail</label>
             <br>
@@ -54,30 +75,8 @@
             <input type="number" step="0.01" id="fee" name="fee">
             <br>
             <input type="submit" name="submit" id="submit" value="Submit">
-        </form>
-    </div>
-    <div id="third">
-        <h1>My communities</h1>
-        {%  if not ingroups %}
-            <p>You are not in any communities. Either join an existing community or make your own!</p>
-        {% else %}
-            <table style="display:table";>
-                <tr>
-                    <th>Group Name</th>
-                    <th>Group Email Address</th>
-                    <th>Fee</th>
-                </tr>
-                {% for row in ingroups %}
-                    <tr>
-                        <th> {{ row.0 }}</th>
-                        <th> {{ row.2 }}</th>
-                        <th> {{ row.1 }}</th>
-                        <th><button><a href="/groups/delete/{{ row.0 }}">Leave</a></button></th>
-                   </tr>
-                {% endfor %}
-             </table>
-        {% endif %}
-
+            </form>
+        </div>
     </div>
 
 
