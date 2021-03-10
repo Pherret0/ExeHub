@@ -39,7 +39,7 @@ class Members(models.Model):
 
 class Pics(models.Model):
     pic_id = models.AutoField(primary_key=True)
-    pic = models.TextField()
+    pic = models.FileField(upload_to="static/exehub/pfp")
 
     class Meta:
         managed = False
@@ -109,9 +109,10 @@ class Users(models.Model):
 
 
 class Upvotes(models.Model):
-    user_id = models.ForeignKey('Users', models.DO_NOTHING, primary_key=True)
+    user_id = models.ForeignKey('Users', models.DO_NOTHING)
     post_id = models.ForeignKey('Posts', models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'upvotes'
+

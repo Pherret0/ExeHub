@@ -20,7 +20,19 @@ from django.contrib.auth.decorators import login_required
 
 
 # Define the web app views
+def getProfile(request):
+    try:
+        pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
+        if not pic_id:
 
+            pic_url = "static/exehubapp/pfp/default.jpg"
+        else:
+            pic_url = Pics.objects.get(pic_id=pic_id).pic
+
+        return pic_url
+
+    except:
+        return " "
 
 def index(request):
     """
@@ -28,19 +40,12 @@ def index(request):
     Passes the the context dictionary with data to be displayed.
     """
 
-    # posts = Posts.objects.all()
-    # for post in posts:
-    #   print(post.post_name)
-    # if post.image:
-    #   with open(post.image, "rb") as image_file:
-    #        image_decoded = base64.b64encode(image_file.read()).decode('utf-8')
-    #    post.image = image_decoded
+    try:
+        id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
 
-    # context = {
-    #   'post': post
-    # }
-    # print(context)
-    #  return render(request, 'index.html', context)
+
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts")
@@ -49,26 +54,35 @@ def index(request):
 
         for row in data:
             poster_owner = row['post_owner']
-            user_id = row['user_id']
-            pic_id = Users.objects.get(user_id=user_id).pic
-            pfp = Pics.objects.get(pic_id=pic_id).pic
-            row['poster_pfp'] = pfp
+            # user_id = row['user_id']
+            #pic_id = Users.objects.get(user_id=user_id).pic
+            #pfp = Pics.objects.get(pic_id=pic_id).pic
+            #row['poster_pfp'] = pfp
 
         try:
-            pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
-            pic_url = Pics.objects.get(pic_id=pic_id).pic
+            #pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
+            #pic_url = Pics.objects.get(pic_id=pic_id).pic
 
-            context = {
-                'data': data,
-                'user_id': user_id,
-                'pfp': pic_url,
-            }
+            pic_url = getProfile(request)
+
+            if pic_url == " ":
+                context = {
+                    'data': data,
+                }
+            else:
+                user_id = request.session['user_id']
+                context = {
+                    'data': data,
+                    'user_id': user_id,
+                    'pfp': pic_url,
+                }
+
         except:
             context = {
                 'data': data,
             }
-    print(data)
     return render(request, 'index.html', context)
+
 
 
 @csrf_exempt
@@ -82,21 +96,46 @@ def profile(request):
     except:
         return render(request, 'login.html')
 
-    if request.method == "POST":
+    if request.POST.get("logout"):
         del request.session['user_id']
         return render(request, 'login.html')
+    elif request.POST.get("uploadProfilePic"):
+        image = request.FILES["image"]
+        form = ProfilePicForm(request.POST, request.FILES)
+        record = Pics(pic=image)
+        record.save()
+        pic_id = record.pic_id
+        user = Users.objects.get(user_id=request.session['user_id'])
+        user.pic_id=pic_id
+        user.save()
+    else:
+        form = ProfilePicForm()
 
     user = Users.objects.get(user_id=request.session['user_id'])
     members = Members.objects.filter(user=user).values_list('group')
-    group_list = []
+
+
+    group_list =[]
     for i in members:
         group_list.append(i[0])
 
+
     groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_name', 'fee', 'group_email')
 
-    context = {'user': user, 'groups': groups}
+    pic_url = getProfile(request)
+
+    if pic_url == " ":
+        context = {'user': user, 'groups':groups, 'form':form}
+    else:
+
+        user_id = request.session['user_id']
+        context = {'user': user, 'groups': groups, 'form': form,
+            'user_id': user_id,
+            'pfp': pic_url,}
+
 
     return render(request, 'profile.html', context)
+
 
 
 @csrf_exempt
@@ -129,6 +168,7 @@ def addEvent(request):
 
     user_id = request.session['user_id']
     user = Users.objects.get(user_id=user_id)
+    post_owner = user.name
 
     if request.method == 'POST':
         try:
@@ -148,10 +188,10 @@ def addEvent(request):
 
         postAch(request)
         form = DocumentForm(request.POST, request.FILES, user_id=user_id)
-        record = Posts(post_name=post_name, start=start, end=end,
+        record = Posts(post_name=post_name, start=start, post_owner=post_owner, end=end,
                        description=description, attendees_min=attendees_min,
                        attendees_max=attendees_max, location=location, type=type,
-                       group=UniGroups.objects.get(group_id=1), image=image, user_id=user_id)
+                       group=UniGroups.objects.get(group_id=1), image=image)
 
         postAch(request)
         record.save()
@@ -170,15 +210,28 @@ def addEvent(request):
     else:
         form = DocumentForm(user_id=user_id)
 
+
+
     # Get all of users groups
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM uni_groups")
         data = dictfetchall(cursor)
-        context = {
-            'data': data, 'form': form
-        }
 
-    return render(request, 'addevent.html', context)
+        pic_url = getProfile(request)
+
+        if pic_url == " ":
+
+            context = {
+                'data': data, 'form': form
+            }
+        else:
+
+            user_id = request.session['user_id']
+            context = {'data': data, 'form': form,
+                       'user_id': user_id,
+                       'pfp': pic_url}
+
+        return render(request, 'addevent.html', context)
 
 
 @csrf_exempt
@@ -194,7 +247,6 @@ def createGroup(request):
 
     return render(request, 'creategroup.html')
 
-
 def viewAllEvents(request):
     """
     View to display the showevents.html template.
@@ -202,13 +254,26 @@ def viewAllEvents(request):
     data to the template to be displayed
     """
 
+    try:
+        id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
+
     # Select all the events from the events table
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts")
         data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
+
+        pic_url = getProfile(request)
+
+        if pic_url == " ":
+            context= {'data': data}
+        else:
+
+            user_id = request.session['user_id']
+            context= {'data': data,'user_id': user_id,
+                    'pfp': pic_url}
+
     return render(request, 'showevents.html', context)
 
 
@@ -218,6 +283,11 @@ def viewEventDetails(request, post_id):
     Passes the the context dictionary with data about the individual
     event to be displayed in the template.
     """
+
+    try:
+        id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
 
     # Select the event from the events table with corresponding event_id
     # and pass to the event template
@@ -237,16 +307,40 @@ def viewEventDetails(request, post_id):
 
 def getViewGroupsData(request):
     user = Users.objects.get(user_id=request.session['user_id'])
-    members = Members.objects.filter(user=user).values_list('group')
-    group_list = []
-    for i in members:
-        group_list.append(i[0])
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM members WHERE user_id=%s", (str(user.user_id)),)
+        data = cursor.fetchall()
+
+    group_list =[]
+    for i in data:
+        group_list.append(i[2])
+
+
+    print(group_list)
 
     groups = UniGroups.objects.all().exclude(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
                                                                                   'group_email')
+
+
+
+
     in_groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
                                                                               'group_email')
-    return {'outgroups': groups, 'ingroups': in_groups}
+
+    print(in_groups)
+    print(groups)
+
+    pic_url = getProfile(request)
+
+    if pic_url == " ":
+        return {'outgroups': groups, 'ingroups': in_groups}
+    else:
+
+        user_id = request.session['user_id']
+        return {'outgroups': groups, 'ingroups': in_groups, 'user_id': user_id,
+                   'pfp': pic_url}
+
 
 
 def viewGroups(request):
@@ -254,6 +348,12 @@ def viewGroups(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
+
+    try:
+        id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
+
     # Select all the events from the events table and save them into a dictionary,
     # pass to the showevents template
 
@@ -267,6 +367,7 @@ def joinGroup(request, group_id):
     member_record = Members(user=user, group=group, is_group_admin=0)
     member_record.save()
 
+
     context = getViewGroupsData(request)
     return render(request, 'showgroups.html', context)
 
@@ -274,11 +375,13 @@ def joinGroup(request, group_id):
 def leaveGroup(request, group_id):
     group = UniGroups.objects.get(group_id=group_id)
     user = Users.objects.get(user_id=request.session['user_id'])
-    instance = Members.objects.get(group=group, user=user)
-    instance.delete()
+
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM members WHERE user_id=%s and group_id=%s", (str(user.user_id), str(group.group_id),))
 
     context = getViewGroupsData(request)
     return render(request, 'showgroups.html', context)
+
 
 
 def viewAchs(request):
@@ -291,11 +394,18 @@ def viewAchs(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM achievements")
         data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-    return render(request, 'showachs.html', context)
 
+        pic_url = getProfile(request)
+
+        if pic_url == " ":
+            context = {'data': data}
+        else:
+
+            user_id = request.session['user_id']
+            context = {'data': data, 'user_id': user_id,
+                       'pfp': pic_url}
+
+    return render(request, 'showachs.html', context)
 
 def termsConditions(request):
     """
@@ -355,6 +465,8 @@ def addUser(request):
     # Save new user to the Model.
     record = Users(is_server_admin=False, date_of_birth=dob, email=email,
                    name=fullName, password_hash=pswd, salt=salt)
+
+
     record.save()
 
     return HttpResponse("Success!")
@@ -460,6 +572,10 @@ def leaderboard(request):
     """
     View to show the leaderboard
     """
+    try:
+        id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
 
     # with connection.cursor() as cursor:
     #    cursor.execute("SELECT * FROM events")
@@ -471,9 +587,18 @@ def leaderboard(request):
 
     data = [{"Name": "James", "Points": 50}, {"Name": "Travis", "Points": 40}, {"Name": "Kai", "Points": 35},
             {"Name": "Jack", "Points": 30}, {"Name": "Ellie", "Points": 25}, {"Name": "Georgia", "Points": 5}]
-    context = {
-        'data': data
-    }
+
+    pic_url = getProfile(request)
+
+    if pic_url == " ":
+        context= {'data': data}
+    else:
+
+        user_id = request.session['user_id']
+        context= {'data': data,'user_id': user_id,
+                'pfp': pic_url}
+
+
     return render(request, 'leaderboard.html', context)
 
 
@@ -653,7 +778,6 @@ def post(request, post_id):
     #    with open(post.image, "rb") as image_file:
     #        image_decoded = base64.b64encode(image_file.read()).decode('utf-8')
     #    post.image = image_decoded
-
     context = {
         'post': post
     }
@@ -667,6 +791,7 @@ def post(request, post_id):
             'data': data
         }
     return render(request, 'post.html', context)
+
 
 
 @csrf_exempt
@@ -686,10 +811,10 @@ def upvote(request):
             # user has already upvoted
             print("User has upvoted")
             with connection.cursor() as cursor:
-                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", post_id)
+                cursor.execute("SELECT COUNT(user_id) FROM upvotes WHERE post_id = %s", (post_id,))
                 data = cursor.fetchall()
                 upvote_num = data[0][0]
-                cursor.execute("DELETE FROM upvotes WHERE user_id = %s AND post_id = %s ", (user_id, post_id))
+                cursor.execute("DELETE FROM upvotes WHERE user_id = %s AND post_id = %s ", (user_id, post_id,))
             upvote_num -= 1
             print("Changing upvote by -1")
             return HttpResponse(upvote_num)
@@ -706,8 +831,8 @@ def upvote(request):
             print("Changing upvote by + 1")
             return HttpResponse(upvote_num)
 
-    # If update successful, return 0
-# If update unsuccessful, return 1
+            # If update successful, return 0
+            # If update unsuccessful, return 1
     except Exception:
         print("Fail")
         return HttpResponse(-1)
@@ -721,13 +846,68 @@ def postAch(request):
         context = {
             'data': data
         }
-        print(data)
+
         if data:
-            print("Found")
+            postAch10(request)
         else:
-            print("Not found")
-            cursor.execute(
-                "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Something to Share\", \"Make 1 post\", 10)")
+            cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Something to Share\", \"Make 1 post\", 10)")
+    return render(request, 'showgroups.html', context)
+
+@csrf_exempt
+def postAch10(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements where ach_name = \"Postal worker\"")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+
+        if data:
+            postAch50(request)
+        else:
+            user_id = request.session["user_id"]
+            user = Users.objects.get(user_id=user_id)
+            post_num = Posts.objects.filter(post_owner = user.name).count()
+            if post_num >= 10:
+
+                cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Postal worker\", \"Make 10 posts\", 10)")
+    return render(request, 'showgroups.html', context)
+
+
+@csrf_exempt
+def postAch50(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements where ach_name = \"Post office manager\"")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+
+        if data:
+            postAch100(request)
+        else:
+            user_id = request.session["user_id"]
+            user = Users.objects.get(user_id=user_id)
+            post_num = Posts.objects.filter(post_owner = user.name).count()
+            if post_num >= 50:
+                cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Post office manager\", \"Make 50 posts\", 50)")
+    return render(request, 'showgroups.html', context)
+
+@csrf_exempt
+def postAch100(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM achievements where ach_name = \"Lord of posts\"")
+        data = dictfetchall(cursor)
+        context = {
+            'data': data
+        }
+        print(data)
+        if not data:
+            user_id = request.session["user_id"]
+            user = Users.objects.get(user_id=user_id)
+            post_num = Posts.objects.filter(post_owner = user.name).count()
+            if post_num >= 100:
+                cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Lord of posts\", \"Make 100 posts\", 50)")
     return render(request, 'showgroups.html', context)
 
 
@@ -738,11 +918,7 @@ def groupAch(request):
         context = {
             'data': data
         }
-        print(data)
-        if data:
-            print("Found")
-        else:
-            print("Not found")
-            cursor.execute(
-                "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"United we stand\", \"Make 1 group\", 10)")
+
+        if not data:
+            cursor.execute("INSERT INTO achievements(ach_name, requirement, value) VALUES (\"United we stand\", \"Make 1 group\", 10)")
     return render(request, 'showgroups.html', context)

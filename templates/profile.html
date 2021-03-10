@@ -35,7 +35,17 @@
                 {% endfor %}
              </table>
         {% endif %}
+    <h1>Select profile picture</h1>
+        <div id="form_container">
+        <form method="post" enctype="multipart/form-data">
 
+                {{ form.image }}
+                <br>
+                <input type="submit" id="submit" name="uploadProfilePic" value="uploadProfilePic">
+
+                <br><br><br>
+        </form>
+        </div>
         <h1>Change Email:</h1>
         <form name="update_email" id="update_email" method="post" action="">
             <label for="email">New Email *</label><br>
@@ -61,7 +71,7 @@
 
         <h1>Logout:</h1>
         <form method="post" action="">
-            <button type="submit" id="button">Logout</button>
+            <input type="submit" id="button" name="logout" value="logout">Logout
         </form>
 
         <h1>Delete Account:</h1>
@@ -70,7 +80,7 @@
             <label for="password">Confirm Password *</label><br>
             <input type="password" id="password" name="password" required>
             <input type="hidden" id="user_id" name="user_id" value=1><br>
-            <input type="submit" value="Confirm Delete" name="submit_delete" id="submit_delete">
+            <input type="submit" value="delete" name="delete" id="submit_delete">
         </form>
         <br><br><br>
 

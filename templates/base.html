@@ -20,32 +20,24 @@
                 <li id="logoLi"><a href="/"><img id="logo" src="{% static 'exehubapp/img/exehub with hat3.png' %}" alt="Home"></a></li>
                 <li id="postLi"><a href="/addevent"><img id="post" src="{% static 'exehubapp/img/icons/newpost1.png' %}" alt="Create Post"></a></li>
                 <a href="/events">All Events</a>
-                <a href="/admin">Admin</a>
-                <a href="/groups">All Groups</a>
-                <li id="groupLi"><a href="/creategroup"><img id="group" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a></li>
-                <a href="/groups">Groups</a>
+                <li id="groupLi"><a href="/groups"><img id="group" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a></li>
                 <a href="/achievements">Achievements</a>
-                <a href="/register">Register</a>
-                <a href="/login">Log In</a>
                 <li id="leaderLi"><a href="/leaderboard"><img id="leader" src="{% static 'exehubapp/img/icons/leaderboard icon wip1 with numbers cropped.png' %}" alt="Leaderboard"></a></li>
                 <li id="dropdown"><button id="menu"><img id="menubutton" src=" {% static 'exehubapp/img/icons/menu icon.png' %}" alt="Menu"></button>
                     <div id="dropdownlinks">
                         <a href="/addevent"><img id="droppost" src="{% static 'exehubapp/img/icons/newpost1.png' %}" alt="Create Post"></a>
-                        <a href="/creategroup"><img id="dropgroup" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a>
+                        <a href="/groups"><img id="dropgroup" src="{% static 'exehubapp/img/icons/group icon wip peeps only2 bigger.png' %}" alt="Create Group"></a>
                         <a href="/leaderboard"><img id="dropleader" src="{% static 'exehubapp/img/icons/leaderboard icon wip1 with numbers cropped.png' %}" alt="Leaderboard"></a>
                     </div>
                 </li>
                 {% if user_id %}
-                    {{ pfp }}
-                    <li><a href="/profile"><img id="pfp" src="{{ pfp }}" alt="Profile"></a></li>
+                    <li><a href="/profile"><img id="pfp" src="/{{ pfp }}" alt="Profile"></a></li>
 
                 {% else %}
                     <li> <a href="/login">Log In</a></li>
                 {% endif %}
             </ul>
-        <!--<div id="pics">
-            <img id="pfp" src="{% static 'exehubapp/img/icons/pfp border.png' %}">
-        </div> -->
+
         </nav>
     </div>
     <div id="content">

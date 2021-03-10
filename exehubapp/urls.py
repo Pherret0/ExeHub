@@ -45,4 +45,9 @@ urlpatterns = [
 
     #Achievements URL Patterns
     path('achievements/', views.viewAchs, name='achievements'),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('post/<int:post_id>', views.post, name='post'),
+    path('upvote/', views.upvote, name='upvote'),
+    path('test/', views.test, name='test'),
+
 ]

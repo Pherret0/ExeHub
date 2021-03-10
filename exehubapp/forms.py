@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import DateInput
 from .models import *
-
+from django.db import connection
 from .models import Posts
 
 class DocumentForm(forms.ModelForm):
@@ -62,11 +62,28 @@ class DocumentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user_id = kwargs.pop('user_id')
-        self.groups = Members.objects.filter(user = self.user_id)
 
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM members WHERE user_id=%s", (str(self.user_id)), )
+            data = cursor.fetchall()
+
+        group_list = []
+        for i in data:
+            group_list.append(i[1])
+
+        self.groups = UniGroups.objects.filter(group_id__in=group_list)
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.fields['group'].queryset = self.groups
+
+
 
     class Meta:
         model = Posts
         fields = ("post_name", "group", "start", "end", "location", "description", "attendees_min", "attendees_max", "image", "type")
+
+class ProfilePicForm(forms.ModelForm):
+    image = forms.FileField(
+        widget = forms.FileInput(attrs={"id":"image"}))
+    class Meta:
+        model = Pics
+        fields = ("pic",)
