@@ -3,7 +3,6 @@ from .models import *
 from django.db import connection
 from .models import Posts
 
-
 class PostForm(forms.ModelForm):
     """
     Class PostForm to display and handle the new post form
@@ -63,7 +62,6 @@ class PostForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         # Get the list of communities the user is in
-
         self.user_id = kwargs.pop('user_id')
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM members WHERE user_id=%s", (self.user_id,))

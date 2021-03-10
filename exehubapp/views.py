@@ -103,6 +103,7 @@ def profile(request):
     except:
         return render(request, 'login.html')
 
+
     # If the user clicks the logout button, delete their session
     if request.POST.get("logout"):
         del request.session['user_id']
@@ -192,7 +193,8 @@ def addEvent(request):
         group = UniGroups.objects.get(group_id=group_id)
 
         # Check post achievement
-        postAch(request)
+
+
         
         # Save the new post
         form = PostForm(request.POST, request.FILES, user_id=user_id)
@@ -200,7 +202,7 @@ def addEvent(request):
                        description=description, attendees_min=attendees_min, group=group,
                        attendees_max=attendees_max, location=location, type=type,image=image)
 
-        postAch(request)
+
         record.save()
 
         # Set post user_id to the users ID
@@ -395,24 +397,43 @@ def viewAchs(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
-
-    # Access control - check user is logged in before displaying page
-    try:
-        user_id = request.session['user_id']
-    except:
-        return render(request, 'login.html')
-
-    # Select all the events from the events table and save them into a
-    # dictionary, pass to the showevents template
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements")
-        data = dictfetchall(cursor)
-
-    # Get the context to be displayed on the template
-    pic_url = getProfile(request)
+    # Get the user ID
     user_id = request.session['user_id']
-    context = {'data': data, 'user_id': user_id,
-               'pfp': pic_url}
+
+    with connection.cursor() as cursor:
+        #Get all achievements from achievements table
+        cursor.execute("SELECT * from achievements")
+        achievement = dictfetchall(cursor)
+
+        # Check if user has earnt achievement
+        for i in achievement:
+            requirement = i["requirement"]
+            cursor.execute("SELECT * FROM has_ach WHERE ach_id = %s AND user_id = %s",
+                           (i["ach_id"],user_id,))
+
+            ach_has = cursor.fetchone()
+
+            # If they do not have achievement, check if they have achieved it
+            if not ach_has:
+                # Run the verification code to see if they have achieved achievement
+                exec(requirement)
+                ach_get = cursor.fetchone()
+
+                if ach_get:
+                    # Give user achievement if they have earnt it
+                    ach_id = i["ach_id"]
+                    ach_id = str(ach_id)
+                    cursor.execute("INSERT INTO has_ach(ach_id, user_id) VALUES (%s,%s)",
+                                   (ach_id,user_id,))
+
+        # Get user achievements to display in table
+        cursor.execute("SELECT * FROM has_ach JOIN achievements "
+                       "ON has_ach.ach_id = achievements.ach_id "
+                       "WHERE user_id = %s", (user_id,))
+        user_achs = dictfetchall(cursor)
+        pic_url = getProfile(request)
+        context = {'data': user_achs, 'user_id': user_id,
+                   'pfp': pic_url}
 
     return render(request, 'showachs.html', context)
 
@@ -530,7 +551,7 @@ def createGroupForm(request):
                        group_email=group_email, fee=fee)
 
     # Save the group to the Model
-    groupAch(request)
+
     record.save()
 
     # Map user to community
@@ -566,32 +587,28 @@ def test(request):
 
 def leaderboard(request):
     """
-    View to show the leaderboard
+    View to show the leaderboard.html view
     """
 
-    # Access control - check user is logged in before displaying page
+    # Access control - check user is logged in
     try:
         user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
-    # with connection.cursor() as cursor:
-    #    cursor.execute("SELECT * FROM events")
-    #    data = dictfetchall(cursor)
-    #    context = {
-    #        'data': data
-    #    }
-    # return render(request, 'showevents.html', context)
+    # Get the total points of each user
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT name, SUM(value) AS sum FROM has_ach JOIN achievements "
+                       "ON has_ach.ach_id = achievements.ach_id JOIN users "
+                       "ON has_ach.user_id = users.user_id "
+                       "GROUP BY users.user_id ORDER BY sum DESC")
+        data = dictfetchall(cursor)
 
-    data = [{"Name": "James", "Points": 50}, {"Name": "Travis", "Points": 40}, {"Name": "Kai", "Points": 35},
-            {"Name": "Jack", "Points": 30}, {"Name": "Ellie", "Points": 25}, {"Name": "Georgia", "Points": 5}]
-
+    #
     pic_url = getProfile(request)
-
     user_id = request.session['user_id']
-    context = {'data': data, 'user_id': user_id,
-               'pfp': pic_url}
-
+    context= {'data': data,'user_id': user_id,
+            'pfp': pic_url}
     return render(request, 'leaderboard.html', context)
 
 
@@ -841,98 +858,6 @@ def upvote(request):
                    'change': 0
                    }
         return HttpResponse(json.dumps(context), content_type='application/json')
-
-
-@csrf_exempt
-def postAch(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements where ach_name = \"Something to Share\"")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-
-        if data:
-            postAch10(request)
-        else:
-            cursor.execute(
-                "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Something to Share\", \"Make 1 post\", 10)")
-    return render(request, 'showgroups.html', context)
-
-
-@csrf_exempt
-def postAch10(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements where ach_name = \"Postal worker\"")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-
-        if data:
-            postAch50(request)
-        else:
-            user_id = request.session["user_id"]
-            user = Users.objects.get(user_id=user_id)
-            post_num = Posts.objects.filter(post_owner=user.name).count()
-            if post_num >= 10:
-                cursor.execute(
-                    "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Postal worker\", \"Make 10 posts\", 10)")
-    return render(request, 'showgroups.html', context)
-
-
-@csrf_exempt
-def postAch50(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements where ach_name = \"Post office manager\"")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-
-        if data:
-            postAch100(request)
-        else:
-            user_id = request.session["user_id"]
-            user = Users.objects.get(user_id=user_id)
-            post_num = Posts.objects.filter(post_owner=user.name).count()
-            if post_num >= 50:
-                cursor.execute(
-                    "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Post office manager\", \"Make 50 posts\", 50)")
-    return render(request, 'showgroups.html', context)
-
-
-@csrf_exempt
-def postAch100(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements where ach_name = \"Lord of posts\"")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-        print(data)
-        if not data:
-            user_id = request.session["user_id"]
-            user = Users.objects.get(user_id=user_id)
-            post_num = Posts.objects.filter(post_owner=user.name).count()
-            if post_num >= 100:
-                cursor.execute(
-                    "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"Lord of posts\", \"Make 100 posts\", 50)")
-    return render(request, 'showgroups.html', context)
-
-
-def groupAch(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM achievements where ach_name = \"United we stand\"")
-        data = dictfetchall(cursor)
-        context = {
-            'data': data
-        }
-
-        if not data:
-            cursor.execute(
-                "INSERT INTO achievements(ach_name, requirement, value) VALUES (\"United we stand\", \"Make 1 group\", 10)")
-    return render(request, 'showgroups.html', context)
 
 
 def getProfile(request):

@@ -16,6 +16,10 @@ $(document).ready(function() {
             document.getElementById("submit").style.border = "2px solid red";
         }
 
+
+
+
+
         // Check max_attendees is greater than min_attendees
         var min_attendees = document.getElementById("attendees_min").value;
         var max_attendees = document.getElementById("attendees_max").value;
@@ -133,10 +137,5 @@ function showImageForm() {
     document.getElementById("image_button").style.color = "white";
     document.getElementById("image_button").style.backgroundColor = "rgba(108, 163, 247, 1)";
 }
-
-
-
-
-
 
 

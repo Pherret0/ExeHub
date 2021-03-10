@@ -1,5 +1,4 @@
 from django.urls import path
-
 from exehubapp import views
 
 # Specify URL patterns for each view in the web page.
@@ -43,7 +42,4 @@ urlpatterns = [
     #Achievements URL Patterns
     path('achievements/', views.viewAchs, name='achievements'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
-
-
-
 ]
