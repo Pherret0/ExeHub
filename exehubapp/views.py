@@ -1,37 +1,14 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import *
-from django.db import connection
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import *
-import base64
 import hashlib
 import json
 import random
 import string
 
-
 # Define the web app views
-def formatPosts(data):
-    for row in data:
-        user_id = row['user_id']
-
-        if not user_id:
-
-            with connection.cursor() as cursor:
-                cursor.execute("UPDATE posts set user_id=1 where post_id IS NULL")  # getting posts
-            pic_url = "static/exehubapp/pfp/default.png"
-
-        else:
-            pic_id = Users.objects.get(user_id=user_id).pic_id
-            pic_url = Pics.objects.get(pic_id=pic_id).pic
-
-        row['poster_pfp'] = pic_url
-    return data
-
 
 @csrf_exempt
 def index(request):
@@ -41,43 +18,58 @@ def index(request):
     """
 
     try:
+        # Gets the user ID if they are logged in
         user_id = request.session['user_id']
     except:
+        # If the user is not logged in, get posts in the public general community
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM posts WHERE group_id=1")  # getting posts
-            data = dictfetchall(cursor)  # putting it int a dict
+            cursor.execute("SELECT * FROM posts WHERE group_id=1")
+            data = dictfetchall(cursor)
             data = formatPosts(data)
+
+            # Store posts in context dictionary
             context = {
                 'data': data,
             }
+
         return render(request, 'index.html', context)
 
+    # Apply filter is user is logged in and selects it.
     if request.POST.get("filter"):
         group_name = request.POST.get("group_select")
+
+        # If filter not selected, display all users community posts
         if group_name=="query_all_groups":
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM posts") # getting posts
-                data = dictfetchall(cursor)  # putting it int a dict
+                cursor.execute("SELECT * FROM posts")
+                data = dictfetchall(cursor)
         else:
+            # If user selects to filter, filter based on the community selected.
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))  # getting posts
-                data = cursor.fetchone()  # putting it int a dict
+                cursor.execute("SELECT * FROM uni_groups WHERE group_name=%s", (str(group_name),))
+                data = cursor.fetchone()
                 group_id = data[0]
 
+            # Get the posts from the selected group
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))  # getting posts
+                cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))
                 data = dictfetchall(cursor)  # putting it int a dict
     else:
+        # If no filter selected display all posts from communities user is in
         with connection.cursor() as cursor:
+
+            # Get ths users joined communities
             user = Users.objects.get(user_id=user_id)
             members = Members.objects.filter(user=user).values_list('group')
             group_list = []
             for i in members:
                 group_list.append(i[0])
 
+            # Get all the posts from the database
             cursor.execute("SELECT * FROM posts")
-            data = dictfetchall(cursor)  # putting it int a dict
+            data = dictfetchall(cursor)
 
+        # Filter posts based on which ones belong to communities user is in.
         new_data = []
         for i in data:
             if i['group_id'] in group_list:
@@ -85,6 +77,7 @@ def index(request):
 
         data = new_data
 
+    # Gather context data to display on template page
     data = formatPosts(data)
     groups = UniGroups.objects.all()
     pic_url = getProfile(request)
@@ -95,8 +88,6 @@ def index(request):
         'user_id': user_id,
         'pfp': pic_url,
     }
-
-
     return render(request, 'index.html', context)
 
 
@@ -106,19 +97,25 @@ def profile(request):
     View to display the profile.html template.
     """
 
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
+    # If the user clicks the logout button, delete their session
     if request.POST.get("logout"):
         del request.session['user_id']
         return render(request, 'login.html')
+
+    # If the user clicks the upload profile picture button, get the image.
     elif request.POST.get("uploadProfilePic"):
         image = request.FILES["image"]
         form = ProfilePicForm(request.POST, request.FILES)
         record = Pics(pic=image)
         record.save()
+
+        # Save image reference in the pics table
         pic_id = record.pic_id
         user = Users.objects.get(user_id=user_id)
         user.pic_id = pic_id
@@ -126,20 +123,19 @@ def profile(request):
     else:
         form = ProfilePicForm()
 
+    # Get a list of the users joined communities
     user = Users.objects.get(user_id=user_id)
     members = Members.objects.filter(user=user).values_list('group')
-
     group_list = []
     for i in members:
         group_list.append(i[0])
-
     groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_name', 'fee', 'group_email')
 
+    # Collect context to be displayed on the HTML template
     pic_url = getProfile(request)
     user_id = request.session['user_id']
     context = {'user': user, 'groups': groups, 'form': form,
-               'user_id': user_id,
-               'pfp': pic_url, }
+               'user_id': user_id, 'pfp': pic_url, }
 
     return render(request, 'profile.html', context)
 
@@ -147,8 +143,7 @@ def profile(request):
 @csrf_exempt
 def register(request):
     """
-    View to display the index.html template.
-    Passes the the context dictionary with data to be displayed.
+    View to display the register.html template.
     """
     return render(request, 'register.html')
 
@@ -167,20 +162,24 @@ def addEvent(request):
     View to display the addevent.html template.
     """
 
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
+    # Get the user ID and their name
     user = Users.objects.get(user_id=user_id)
     post_owner = user.name
 
     if request.method == 'POST':
+        # Check if an image was uploaded and get it if yes
         try:
             image = request.FILES['image']
         except:
             image = ""
 
+        # Get data from HTML form
         post_name = request.POST['post_name']
         start = request.POST['start']
         end = request.POST['end']
@@ -192,20 +191,22 @@ def addEvent(request):
         group_id = request.POST['group']
         group = UniGroups.objects.get(group_id=group_id)
 
+        # Check post achievement
         postAch(request)
-        form = DocumentForm(request.POST, request.FILES, user_id=user_id)
+        
+        # Save the new post
+        form = PostForm(request.POST, request.FILES, user_id=user_id)
         record = Posts(post_name=post_name, start=start, post_owner=post_owner, end=end,
                        description=description, attendees_min=attendees_min, group=group,
-                       attendees_max=attendees_max, location=location, type=type,
-                       image=image)
+                       attendees_max=attendees_max, location=location, type=type,image=image)
 
         postAch(request)
         record.save()
 
+        # Set post user_id to the users ID
         post_id = record.post_id
         with connection.cursor() as cursor:
             cursor.execute("UPDATE posts SET user_id=%s WHERE post_id=%s", (user_id, post_id,))
-
         id = record.post_id
 
         try:
@@ -213,6 +214,7 @@ def addEvent(request):
         except:
             user = ""
 
+        # If a post is an event store in attendees table
         if type == "event" and user != "":
             event = Posts.objects.get(post_id=id)
             attendee_record = Attendees(user=user, event=event)
@@ -221,20 +223,21 @@ def addEvent(request):
         return redirect('/')
 
     else:
-        form = DocumentForm(user_id=user_id)
+        form = PostForm(user_id=user_id)
 
     # Get all of users groups
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM uni_groups")
         data = dictfetchall(cursor)
 
-        pic_url = getProfile(request)
-        user_id = request.session['user_id']
-        context = {'data': data, 'form': form,
-                   'user_id': user_id,
-                   'pfp': pic_url}
+    # Get context data to be displayed on the template
+    pic_url = getProfile(request)
+    user_id = request.session['user_id']
+    context = {'data': data, 'form': form,
+               'user_id': user_id,
+               'pfp': pic_url}
 
-        return render(request, 'addevent.html', context)
+    return render(request, 'addevent.html', context)
 
 
 @csrf_exempt
@@ -243,6 +246,7 @@ def createGroup(request):
     View to display the creategroup.html template.
     """
 
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
@@ -258,6 +262,7 @@ def viewAllEvents(request):
     data to the template to be displayed
     """
 
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
@@ -268,6 +273,7 @@ def viewAllEvents(request):
         cursor.execute("SELECT * FROM posts")
         data = dictfetchall(cursor)
 
+    # Get context to be displayed in template
     pic_url = getProfile(request)
     context = {'data': data, 'user_id': user_id,
                'pfp': pic_url}
@@ -282,6 +288,7 @@ def viewEventDetails(request, post_id):
     event to be displayed in the template.
     """
 
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
@@ -304,23 +311,31 @@ def viewEventDetails(request, post_id):
 
 
 def getViewGroupsData(request):
+    """
+    Function to get all the communities the user is in, and is not in
+    """
     user = Users.objects.get(user_id=request.session['user_id'])
     user_id = str(user.user_id)
 
+    # Get list of communities user is in
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM members WHERE user_id=%s", (user_id,) )
         data = cursor.fetchall()
 
+    # Store them in a list of integers
     group_list = []
     for i in data:
         group_list.append(i[2])
 
-    groups = UniGroups.objects.all().exclude(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
-                                                                                  'group_email')
+    # Get communities user is not in
+    groups = UniGroups.objects.all().exclude(group_id__in=group_list).values_list(
+        'group_id', 'group_name', 'fee','group_email')
 
-    in_groups = UniGroups.objects.filter(group_id__in=group_list).values_list('group_id', 'group_name', 'fee',
-                                                                              'group_email')
+    # Get communities user is in
+    in_groups = UniGroups.objects.filter(group_id__in=group_list).values_list(
+        'group_id', 'group_name', 'fee','group_email')
 
+    # Get context to display on template
     pic_url = getProfile(request)
     user_id = request.session['user_id']
     return {'outgroups': groups, 'ingroups': in_groups, 'user_id': user_id,
@@ -332,7 +347,7 @@ def viewGroups(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
-
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
@@ -346,19 +361,27 @@ def viewGroups(request):
 
 
 def joinGroup(request, group_id):
+    """
+    Function to add a user to a community
+    """
+    # Get group and user, add them to the members table
     group = UniGroups.objects.get(group_id=group_id)
     user = Users.objects.get(user_id=request.session['user_id'])
     member_record = Members(user=user, group=group, is_group_admin=0)
     member_record.save()
-
     context = getViewGroupsData(request)
     return render(request, 'showgroups.html', context)
 
 
 def leaveGroup(request, group_id):
+    """
+    Function to remove a user from a community
+    """
+    # Get the community and the user objects
     group = UniGroups.objects.get(group_id=group_id)
     user = Users.objects.get(user_id=request.session['user_id'])
 
+    # Remove user from community
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM members WHERE user_id=%s and group_id=%s",
                        (str(user.user_id), str(group.group_id),))
@@ -372,6 +395,8 @@ def viewAchs(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
+
+    # Access control - check user is logged in before displaying page
     try:
         user_id = request.session['user_id']
     except:
@@ -383,15 +408,13 @@ def viewAchs(request):
         cursor.execute("SELECT * FROM achievements")
         data = dictfetchall(cursor)
 
+    # Get the context to be displayed on the template
     pic_url = getProfile(request)
-
-
     user_id = request.session['user_id']
     context = {'data': data, 'user_id': user_id,
                'pfp': pic_url}
 
     return render(request, 'showachs.html', context)
-
 
 def termsConditions(request):
     """
@@ -399,9 +422,7 @@ def termsConditions(request):
     """
     return render(request, 'termsconditions.html')
 
-
 # Define functions
-
 
 @csrf_exempt
 def addUser(request):
@@ -415,8 +436,10 @@ def addUser(request):
     name = request.POST.get('name')
     email = request.POST.get('email')
     dob = request.POST.get('dob')
-
     password = request.POST.get('password')
+
+    # Concatenate first and last name
+    fullName = fname + " " + name
 
     # Generate salt
     salt = ''.join([random.choice(string.ascii_letters) for i in range(16)])
@@ -425,9 +448,6 @@ def addUser(request):
     # Hash the password
     hash_sha3_512 = hashlib.new("sha3_512", salted_password.encode())
     pswd = hash_sha3_512.digest()
-
-    # Concatenate first and last name
-    fullName = fname + " " + name
 
     pic = Pics(pic="static/exehubapp/pfp/default.png")
     pic.save()
@@ -439,6 +459,7 @@ def addUser(request):
 
     record.save()
 
+    # Map user to community
     group = UniGroups.objects.get(group_id=1)
     member_record = Members(user=record, group=group, is_group_admin=0)
     member_record.save()
@@ -512,6 +533,7 @@ def createGroupForm(request):
     groupAch(request)
     record.save()
 
+    # Map user to community
     group = UniGroups.objects.get(group_name=group_name)
     member_record = Members(user=group_owner, group=group, is_group_admin=1)
     member_record.save()
@@ -546,8 +568,10 @@ def leaderboard(request):
     """
     View to show the leaderboard
     """
+
+    # Access control - check user is logged in before displaying page
     try:
-        id = request.session['user_id']
+        user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
 
@@ -720,8 +744,8 @@ def deleteAccount(request):
         # If password incorrect, return 2
         return HttpResponse(2)
 
-    # If user deleted successfully, return 0
 
+    # Remove all of users posts before deletion of account
     posts = Posts.objects.filter(user_id=request.session['user_id'])
     for i in posts:
         children = Posts.objects.filter(parent=i.post_id)
@@ -729,6 +753,7 @@ def deleteAccount(request):
             j.delete()
         i.delete()
 
+    # If user deleted successfully, return 0
     user.delete()
     del request.session['user_id']
     return HttpResponse(0)
@@ -911,7 +936,27 @@ def groupAch(request):
 
 
 def getProfile(request):
+    """
+    Function to get the image URL of the users profile picture.
+    """
+    # Get the user ID, retrieve their object from the model, and get the image path
     user_id = request.session['user_id']
     pic_id = Users.objects.get(user_id=user_id).pic_id
     pic_url = Pics.objects.get(pic_id=pic_id).pic
     return pic_url
+
+
+def formatPosts(data):
+    """
+    Function to get the profile picture of posts owner
+    """
+
+    # Loop through each post and get the posters profile picture.
+    for row in data:
+        user_id = row['user_id']
+        pic_id = Users.objects.get(user_id=user_id).pic_id
+        pic_url = Pics.objects.get(pic_id=pic_id).pic
+        row['poster_pfp'] = pic_url
+
+    return data
+

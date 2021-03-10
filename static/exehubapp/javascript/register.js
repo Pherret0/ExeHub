@@ -46,7 +46,7 @@ var timer = window.setInterval(function(){
     }else{
         document.getElementById("submit").style.border = "2px solid red";
     }
-    
+
 
 }, interval);
 
