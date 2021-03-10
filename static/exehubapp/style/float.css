@@ -16,6 +16,11 @@ body{
     width: 100%;
     color: #6ca3f7;
 }
+a{
+    text-decoration: none;
+    color:  #6ca3f7;
+    font-size: 30px;
+}
 
 #header{
     height: 100px;

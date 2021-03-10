@@ -9,7 +9,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('events/<int:post_id>', views.viewEventDetails, name='event'),
     path('termsconditions/', views.termsConditions, name='termsConditions'),
-    path('post/<int:post_id>', views.post, name='post'),
     path('upvote/', views.upvote, name='upvote'),
 
     # Groups URL Patterns
@@ -31,6 +30,8 @@ urlpatterns = [
     # Post URL Patterns
     path('addevent/', views.addEvent, name='addevent'),
     path('events/', views.viewAllEvents, name='events'),
+    path('post/<int:post_id>', views.post, name='post'),
+    path('post/comment/', views.comment, name='comment'),
 
     # Profile URL Patterns
     path('profile/', views.profile, name='profile'),

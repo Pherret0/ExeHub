@@ -4,73 +4,75 @@
 
 {% block links %}
     <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/post.css' %}">
+    <script type="text/javascript" src="{% static 'exehubapp/javascript/post.js' %}"></script>
 {% endblock %}
 
 {% block title %} View Post {% endblock %}
 
 {% block content %}
-        <div id="feed">
-        {% for row in data %}
-            <div class="post" id={{ row.post_id }}>
-                <div class="post_name">
-                    <p> {{ row.post_name }}</p>
-                </div>
-                <div class="post_content">
-                    {% if row.type == 'default' %} <!-- Text and image posts -->
-                        {% if row.image == None %} <!-- Text posts -->
-                            <div class="post_desc">
-                                <p>{{ row.description }}</p>
-                            </div>
-                        {% else %} <!-- Image posts -->
-                            <div class="post_image">
-                                <img src="{{ row.image }}">
-                            </div>
-                            <div class="post_desc">
-                                <p>{{ row.description }}</p>
-                            </div>
-                        {% endif %}
-                    {% else %} <!-- Event posts -->
-                        <div class="post_image">
-                            <img src="{{ row.image }}">
+   {% for row in post %}
+     <div id="feed">
+        <div class="post" id={{ row.post_id }}>
+            <div class="post_details">
+                <img class="poster_pfp" src="/{{ row.poster_pfp }}">
+                <p class="poster_name"> {{ row.post_owner }}</p>
+                <p class="post_name"> {{ row.post_name }}</p>
+            </div>
+            <div class="post_content">
+                {% if row.type == 'default' %} <!-- Text and image posts -->
+                    {% if not row.image %} <!-- Text posts -->
+                        <div class="post_desc">
+                            <p>{{ row.description }}</p>
+                        </div>
+                    {% else %} <!-- Image posts -->
+                        <div class="post_image_container">
+                            <img class="post_image" src="/{{ row.image }}">
                         </div>
                         <div class="post_desc">
-                            <p>{{ row.description}}</p>
-                        </div>
-                        <div class="post_time">
-                            <p class="start_time">{{ row.start }}</p>
-                            <p class="end_time">{{ row.end }}</p>
-                        </div>
-                        <div class="Location">
-                            <p>{{ row.location }}</p>
+                            <p>{{ row.description }}</p>
                         </div>
                     {% endif %}
-                </div>
-
-                <div id="icons">
-                    <div id="upvote_div">
-                        <div id="upvote_count">
-                            <p class="count"> {{ row.upvote }} </p>
+                {% else %} <!-- Event posts -->
+                    {% if not row.image %}
+                        <div class="post_image_container">
+                            <img class="post_image" src="{{ row.image }}">
                         </div>
-                        <button id="upvote">
-                            <img id="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
-                        </button>
+                    {% endif %}
+                    <div class="post_desc">
+                        <p>{{ row.description}}</p>
                     </div>
-                    <button id="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
-                    <button id="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
-                </div>
-                <div class="post_comments">
-                    <div class="view_comments">
-                        <ul>
-                        </ul>
+                    <div class="post_time">
+                        <p class="start_time">{{ row.start }}</p>
+                        <p class="end_time">{{ row.end }}</p>
                     </div>
-                    <!--
-                    <div class="add_comment">
-                        Post a comment
-                        <input type="text" id="add_comment_input" name="add_comment_input">
+                    <div class="Location">
+                        <p>{{ row.location }}</p>
                     </div>
-                    -->
+                {% endif %}
+            </div>
+            <div class="icons">
+                <div class="upvote_div">
+                    <div class="upvote_count">
+                        <p class="count"> {{ row.upvote }} </p>
+                    </div>
+                    <button class="upvote">
+                        <img class="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
+                    </button>
                 </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+        <div class="comments">
+            <form id="add_comment" name="add_comment" method="post" action="" >
+                <label for="comment_text">Comment!</label>
+                <textarea id="comment_text" name="comment_text" required></textarea>
+                <input type="hidden" value="{{ row.post_id }}" name="post_id">
+                <input type="submit" name="submit" id="submit" value="Submit">
+             </form>
+            <div class="view_comments">
+                {% for row in comments %}
+                    <p>{{ row.description }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

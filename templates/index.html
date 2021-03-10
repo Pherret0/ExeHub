@@ -71,19 +71,6 @@
                             </button>
                         </div>
                         <button class="comments"><img src="{% static 'exehubapp/img/icons/post/comment icon wip3.png' %}"></button>
-                        <button class="open"><img src="{% static 'exehubapp/img/icons/post/fullpage icon wip1.png' %}"></button>
-                    </div>
-                    <div class="post_comments">
-                        <div class="view_comments">
-                            <ul>
-                            </ul>
-                        </div>
-                        <!--
-                        <div class="add_comment">
-                            Post a comment
-                            <input type="text" id="add_comment_input" name="add_comment_input">
-                        </div>
-                        -->
                     </div>
                 </div>
             {% endfor %}
@@ -101,11 +88,6 @@
                     </select>
                     <input type="submit" value="Filter" name="filter" id="filter">
                 </form>
-            </div>
-
-
-            <div id="pop_out_post">
-                <p>Hello!</p>
             </div>
         {% endif %}
 {% endblock %}

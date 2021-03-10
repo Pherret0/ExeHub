@@ -1,47 +1,114 @@
+/* Created By Travis */
 
-.post {
+#content{
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: row nowrap;
+}
+
+#feed{
+    display: flex;
+    height: auto;
+    flex-flow: row wrap;
+    width: 40vw;
+}
+
+p{
+    margin: 10px;
+    padding: 0;
+}
+
+.post{
+    display: flex;
+    flex-flow: column;
     background-color: white;
-    margin: 3%;
     min-height: 0;
-    min-width: 50%;
+    min-width: 200px;
+    max-height: 600px;
+    max-width: 600px;
+    /*max-height: 10vh;*/
+    width: 100%;
     border: 10px solid #6CA3F7;
     border-radius: 10px;
-    padding: 10px;
+}
+.comments{
+    display: flex;
+    flex-flow: column;
+    background-color: white;
+    min-height: 0;
+    min-width: 200px;
+    max-height: 600px;
+    max-width: 600px;
+    /*max-height: 10vh;*/
+    width: 100%;
+    border: 10px solid #6CA3F7;
+    border-radius: 10px;
+}
+.post_details{
+    margin: 0;
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+}
+.poster_pfp{
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    border: 2px solid #6CA3F7;
+    border-radius: 15px;
+}
+
+.poster_name{
+    flex: 1;
+}
+.poster_name{
+    flex: 1;
+}
+.post_name{
+    flex: 2;
 }
 
 .post_content{
-    flex-grow: 2;
-}
-.post_comments{
+    border: 1px solid rgba(57, 84, 128, 0.82);
     display: flex;
-    flex-flow: column wrap;
-    flex-grow: 1;
+    flex-flow: column;
+    min-height: 0;
 }
 
-.view_comments{
+.post_image_container {
+    min-height: 0;
     flex-grow: 1;
-    display: none;
+    max-height: 100%;
+    max-width: 100%;
 }
-
-.add_comment{
-    flex-grow: 1;
+/* fixed up to here */
+.post_image{
+    max-width: 100%;
+    max-height: 100%;
 }
+.post_desc{
 
-#pop_out_post{
-    display: none;
-    position: fixed;
+}
+.icons{
+    margin: 5px;
+}
+.upvote_div{
+    display: flex;
+    font-size: 25px;
     justify-content: center;
-    z-index: 1;
-    background: rgba(0,0,0,0.99);
-    text-align: center;
-    height: 100%;
-    width: 75%;
-    color: white;
+}
+.upvote_count{
+    margin: 0;
+    padding: 0;
+}
+.upvote{
+    margin: 0;
+    padding: 0;
+}
+.upvote_img{
+
 }
 
-#icons{
+.icons{
     display: flex;
     height: 50px;
 }
@@ -55,17 +122,4 @@ button{
     cursor: pointer;
     overflow: hidden;
     outline: none;
-}
-#upvote_div{
-    display: flex;
-    font-size: 25px;
-    justify-content: center;
-}
-#upvote_count{
-    margin: 0;
-    padding: 0;
-}
-#upvote{
-    margin: 0;
-    padding: 0;
 }

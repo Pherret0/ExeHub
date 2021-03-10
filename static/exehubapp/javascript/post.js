@@ -1,14 +1,4 @@
-<!-- Created By Travis -->
 $(document).ready(function(){
-    $('.comments').on('click', function(e){
-        /*
-            Relocated user to specific comment page for more details inc. comments
-         */
-        e.preventDefault();
-         let id = $(this).closest('.post').attr('id');
-        window.location.href = "/post/" + id;
-    });
-
     $('#feed').on('click', '.upvote', function (e) {
         /*
             Listens for an upvote arrow to be clicked and increases/decreases upvote (if already upvoted)
@@ -16,7 +6,7 @@ $(document).ready(function(){
          */
         let post_id = $(this).closest('.post').attr('id');
         e.preventDefault();
-        $.ajax({ // sending ajav request
+        $.ajax({ // sending ajax request
             type: 'POST',
             url: 'upvote/',
             context: this,
@@ -38,4 +28,21 @@ $(document).ready(function(){
             }
         });
    });
+
+    $('#add_comment').submit(function(e) {
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/post/comment/',
+            data: $(this).serialize(),
+            success: function(response){
+                if (response == 0){
+                    alert("Posted comment");
+                } else{
+                    alert("Please login to comment");
+                }
+            }
+        });
+    });
 });

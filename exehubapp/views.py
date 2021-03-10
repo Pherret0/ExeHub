@@ -781,29 +781,24 @@ def post(request, post_id):
     """
     Displays an individual post and comments
     """
-    """
-    print(post_id)
-    post = Posts.objects.get(post_id=post_id)  # check for injections here
-    print(post)
-    if not post:
-        # If there is no postt with the post_id specified, redirect to the home page.
-        return render(request, 'index.html')
-    print(post.post_name)
-    # if post.image:
-    #    with open(post.image, "rb") as image_file:
-    #        image_decoded = base64.b64encode(image_file.read()).decode('utf-8')
-    #    post.image = image_decoded
-    context = {
-        'post': post
-    }
-    """
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts WHERE post_id=%s", (post_id,))
-        data = dictfetchall(cursor)
-        print(data)
+        post = dictfetchall(cursor)
+        if not post:
+            # If there is no post with the post_id specified, redirect to the home page.
+            return render(request, 'index.html')
+
+        cursor.execute("SELECT * FROM posts WHERE parent=%s AND type='reply'", (post_id,))
+        comments = dictfetchall(cursor)
+
+
+        post = formatPosts(post)
+        comments = formatPosts(comments)
+
         context = {
-            'data': data
+            'post': post,
+            'comments': comments,
         }
     return render(request, 'post.html', context)
 
@@ -885,3 +880,38 @@ def formatPosts(data):
 
     return data
 
+@csrf_exempt
+def comment(request):
+    """
+     Creates a new post with type reply and parent id as the id of the post it was commented on.
+    """
+
+
+    try:
+        user_id = request.session['user_id']
+    except:
+        return HttpResponse(1)
+
+    post_id = request.POST.get('post_id')
+    comment = request.POST.get('comment_text')
+    post_name = "A comment"
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT name FROM users where user_id = %s", (user_id,))
+        data = cursor.fetchall()
+        user_name = data[0][0]
+
+        cursor.execute("SELECT group_id FROM posts where post_id = %s", (post_id,))
+        data = cursor.fetchall()
+        group_id = data[0][0]
+
+        print(post_name)
+        print(user_name)
+        print(group_id)
+        print(post_id)
+        print(comment)
+
+        cursor.execute("INSERT INTO posts (post_name, post_owner, group_id, type, parent, description, user_id) VALUES "
+                       "(%s, %s, %s, %s, %s, %s, %s)", (str(post_name), str(user_name), str(group_id), 'reply', str(post_id), str(comment), str(user_id)))
+
+    return HttpResponse(0)

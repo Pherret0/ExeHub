@@ -98,38 +98,6 @@ p{
 .upvote_img{
 
 }
-.comments{
-
-}
-.open{
-
-}
-.post_comments{
-    display: flex;
-    flex-flow: column wrap;
-    flex-grow: 1;
-}
-
-.view_comments{
-    flex-grow: 1;
-    display: none;
-}
-
-.add_comment{
-    flex-grow: 1;
-}
-
-#pop_out_post{
-    display: none;
-    position: fixed;
-    justify-content: center;
-    z-index: 1;
-    background: rgba(0,0,0,0.99);
-    text-align: center;
-    height: 100%;
-    width: 75%;
-    color: white;
-}
 
 .icons{
     display: flex;
