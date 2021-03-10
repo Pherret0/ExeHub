@@ -68,8 +68,9 @@ class DocumentForm(forms.ModelForm):
             data = cursor.fetchall()
 
         group_list = []
+
         for i in data:
-            group_list.append(i[1])
+            group_list.append(i[2])
 
         self.groups = UniGroups.objects.filter(group_id__in=group_list)
         super(DocumentForm, self).__init__(*args, **kwargs)

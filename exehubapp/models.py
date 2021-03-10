@@ -61,6 +61,7 @@ class Posts(models.Model):
     image = models.FileField(blank=True, null=True, upload_to="static/exehubapp/post_images")
     parent = models.PositiveIntegerField(blank=True, null=True)
 
+
     class Meta:
         managed = False
         db_table = 'posts'

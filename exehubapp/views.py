@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 def getProfile(request):
     try:
         pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
+        print(pic_id)
         if not pic_id:
 
             pic_url = "static/exehubapp/pfp/default.png"
@@ -49,32 +50,27 @@ def index(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts")  # getting posts
         data = dictfetchall(cursor)  # putting it int a dict
-        print(data)  # printing dict
 
         for row in data:
             post_owner = row['post_owner']
             user_id = row['user_id']
-            print(user_id)
-            try:
-                pic_id = Users.objects.get(user_id=user_id).pic_id
-                if not pic_id:
-                    pic_url = "static/exehubapp/pfp/default.png"
-                else:
-                    pic_url = Pics.objects.get(pic_id=pic_id).pic
-            except:
-                record = Pics(pic=None)
-                record.save()
-                pic_id = record.pic_id
-                user = Users.objects.get(user_id=request.session[user_id])
-                user.pic_id = pic_id
-                user.save()
+
+            if not user_id:
+
+                with connection.cursor() as cursor:
+                    cursor.execute("UPDATE posts set user_id=1 where post_id IS NULL")  # getting posts
+                pic_url = "static/exehubapp/pfp/default.png"
+
+            else:
                 pic_id = Users.objects.get(user_id=user_id).pic_id
                 if not pic_id:
                     pic_url = "static/exehubapp/pfp/default.png"
                 else:
                     pic_url = Pics.objects.get(pic_id=pic_id).pic
 
+
             row['poster_pfp'] = pic_url
+
 
         try:
             # pic_id = Users.objects.get(user_id=request.session['user_id']).pic_id
