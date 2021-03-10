@@ -60,6 +60,7 @@ class Posts(models.Model):
     type = models.CharField(max_length=7)
     image = models.FileField(blank=True, null=True, upload_to="static/exehubapp/post_images")
     parent = models.PositiveIntegerField(blank=True, null=True)
+    user_id = models.IntegerField()
 
 
     class Meta:

@@ -759,14 +759,20 @@ def deleteAccount(request):
         # If password incorrect, return 2
         return HttpResponse(2)
 
-    try:
-        # If user deleted successfully, return 0
-        user.delete()
-        del request.session['user_id']
-        return HttpResponse(0)
-    except:
-        # If error in deleting user, return 1
-        return HttpResponse(1)
+
+    # If user deleted successfully, return 0
+
+    posts = Posts.objects.filter(user_id=request.session['user_id'])
+    for i in posts:
+        children = Posts.objects.filter(parent=i.post_id)
+        for j in children:
+            j.delete()
+        i.delete()
+
+    user.delete()
+    del request.session['user_id']
+    return HttpResponse(0)
+
 
 
 @csrf_exempt
