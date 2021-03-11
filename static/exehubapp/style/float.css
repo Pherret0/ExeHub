@@ -10,7 +10,6 @@ body{
     /*background-color: rgba(255, 255, 255, 1);*/
     background-color: #D9E2EF;
     font-size: 20px;
-    /*font-family: 'Press Start 2P', DotGothic16, Arial, Helvetica, sans-serif;*/
     font-family: 'Lato', sans-serif;
     height: 100%;
     width: 100%;
@@ -89,55 +88,6 @@ img{
 #dropdownlinks{
     display: none;
 }
-
-
-/*
-#header{
-    height: 100px;
-    padding: 20px;
-    position: fixed;  Not sure if to make navbar fixed or not
-    background-color: #D9E2EF;
-}
-
-#navbar {
-    display: flex;
-    flex-flow: row nowrap;
-    height: 100%;
-    width: 100%;
-    max-width: 100%;
-    max-height: 100%;
-}
-img{
-    object-fit: cover;
-    max-width: 100%;
-    max-height: 100%;
-}
-
-#logo{
-    float: left;
-}
-#links{
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-a{
-    color: rgba(108, 163, 247, 1);
-    flex: 1;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 30px;
-    height: 100%;
-    width: 100%;
-}
-
-a:hover{
-    transition-duration: 0.5s;
-    background-color: rgba(108, 163, 247, 1);
-    color: white;
-    border-radius: 100%;
-}
-*/
 
 table, th, td {
   border: 1px solid black;
