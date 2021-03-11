@@ -79,6 +79,7 @@ def index(request):
 
     # Gather context data to display on template page
     data = formatPosts(data)
+    data_pass = data
     groups = UniGroups.objects.all()
 
     with connection.cursor() as cursor:
@@ -90,11 +91,13 @@ def index(request):
     for i in data:
         group_list.append(i[2])
 
+ 
     groups = UniGroups.objects.filter(group_id__in=group_list)
+    print(groups)
     pic_url = getProfile(request)
     user_id = request.session['user_id']
     context = {
-        'data': data,
+        'data': data_pass,
         'groups': groups,
         'user_id': user_id,
         'pfp': pic_url,
