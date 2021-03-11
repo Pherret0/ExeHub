@@ -38,7 +38,7 @@ $(document).ready(function(){
             data: $(this).serialize(),
             success: function(response){
                 if (response == 0){
-                    alert("Posted comment");
+                    location.reload();
                 } else{
                     alert("Please login to comment");
                 }
