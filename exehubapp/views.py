@@ -397,8 +397,16 @@ def viewAchs(request):
     View to display the showgroups.html template.
     Passes the the context dictionary with data to be displayed.
     """
+    # Access control - check if user is logged in
+    try:
+        user_id = request.session['user_id']
+    except:
+        return render(request, 'login.html')
+    
     # Get the user ID
     user_id = request.session['user_id']
+    user = Users.objects.get(user_id=user_id)
+    user_name = user.name
 
     with connection.cursor() as cursor:
         #Get all achievements from achievements table
@@ -782,6 +790,8 @@ def post(request, post_id):
     Displays an individual post and comments
     """
 
+    user_id = request.session['user_id']
+
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM posts WHERE post_id=%s", (post_id,))
         post = dictfetchall(cursor)
@@ -795,10 +805,12 @@ def post(request, post_id):
 
         post = formatPosts(post)
         comments = formatPosts(comments)
-
+        pic_url = getProfile(request)
         context = {
             'post': post,
             'comments': comments,
+            'user_id':user_id,
+            'pfp':pic_url
         }
     return render(request, 'post.html', context)
 

@@ -8,7 +8,6 @@ $(document).ready(function(){
             data: $(this).serialize(),
             success: function(response){
                 if (response == 0){
-                    alert("Login successful");
                     window.location.href = "/";
                 } else{
                     alert("Login unsuccessful");
