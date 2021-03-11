@@ -1,6 +1,5 @@
 /* Created By Travis */
 
-
 #feed{
     display: flex;
     flex-flow: column wrap;
@@ -29,7 +28,6 @@ p{
 }
 .comments{
     display: flex;
-    height: min-content;
     flex-grow: 1;
     flex-shrink: 1;
     flex-flow: column;
@@ -45,6 +43,7 @@ p{
     text-align: left;
     font-size: 22px;
     overflow-wrap: break-word;
+    padding-bottom: 5vh;
 }
 #add_comment{
     margin: 3%;
@@ -78,7 +77,7 @@ p{
 }
 .comment{
     margin: 10px;
-    padding: 6px
+    padding: 6px;
 }
 .post_content{
     border: 1px solid rgba(57, 84, 128, 0.82);
