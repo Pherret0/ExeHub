@@ -50,27 +50,16 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="icons">
-                <div class="upvote_div">
-                    <div class="upvote_count">
-                        <p class="count"> {{ row.upvote }} </p>
-                    </div>
-                    <button class="upvote">
-                        <img class="upvote_img" src="{% static 'exehubapp/img/icons/post/upvote arrow wip 1.png' %}">
-                    </button>
-                </div>
-            </div>
         </div>
         <div class="comments">
             <form id="add_comment" name="add_comment" method="post" action="" >
-                <label for="comment_text">Comment!</label>
-                <textarea id="comment_text" name="comment_text" required></textarea>
+                <textarea id="comment_text" name="comment_text" required placeholder="Write a comment!"></textarea>
                 <input type="hidden" value="{{ row.post_id }}" name="post_id">
                 <input type="submit" name="submit" id="submit" value="Submit">
              </form>
             <div class="view_comments">
                 {% for row in comments %}
-                    <p>{{ row.description }}</p>
+                    <p class="comment"><img class="comment_pfp" src="\{{row.poster_pfp}}"> {{ row.post_owner }} : {{ row.description }}</p>
                 {% endfor %}
             </div>
         </div>

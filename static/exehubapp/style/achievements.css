@@ -1,0 +1,15 @@
+table{
+    border: none;
+    border-collapse: collapse;
+}
+tr{
+    border: none;
+}
+#show_achievements{
+    display: flex;
+    flex-flow: column nowrap;
+    width: 60%;
+}
+#achievements_table{
+    flex-grow: 1;
+}

@@ -3,25 +3,27 @@
 {% load static %}
 
 {% block links %}
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/achievements.css' %}">
 {% endblock %}
 
 {% block title %} View Achievements {% endblock %}
 
 {% block content %}
-    <h1>Achievements</h1>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Points</th>
-        </tr>
-
-        {% for row in data %}
+    <div id="show_achievements">
+        <h1>Achievements</h1>
+        <table id="achievements_table">
             <tr>
-               <th> {{ row.ach_name }}</th>
-               <th> {{ row.value }} </th>
-           </tr>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
 
-        {% endfor %}
-    </table>
+            {% for row in data %}
+                <tr>
+                   <th> {{ row.ach_name }}</th>
+                   <th> {{ row.value }} </th>
+               </tr>
 
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}

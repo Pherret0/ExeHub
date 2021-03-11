@@ -1,15 +1,12 @@
 /* Created By Travis */
 
-#content{
-    display: flex;
-    flex-flow: row nowrap;
-}
 
 #feed{
     display: flex;
-    height: auto;
-    flex-flow: row wrap;
+    flex-flow: column wrap;
     width: 40vw;
+    height: min-content;
+    min-height: 25%;
 }
 
 p{
@@ -21,33 +18,43 @@ p{
     display: flex;
     flex-flow: column;
     background-color: white;
-    min-height: 0;
-    min-width: 200px;
-    max-height: 600px;
-    max-width: 600px;
-    /*max-height: 10vh;*/
-    width: 100%;
+    height: min-content;
     border: 10px solid #6CA3F7;
     border-radius: 10px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-bottom: 4%;
+    max-width: 100%;
+    max-height: 50vh;
 }
 .comments{
     display: flex;
+    height: min-content;
+    flex-grow: 1;
+    flex-shrink: 1;
     flex-flow: column;
     background-color: white;
     min-height: 0;
-    min-width: 200px;
-    max-height: 600px;
-    max-width: 600px;
     /*max-height: 10vh;*/
-    width: 100%;
     border: 10px solid #6CA3F7;
     border-radius: 10px;
+    max-width: 100%;
+}
+.view_comments{
+    min-height: 100px;
+    text-align: left;
+    font-size: 22px;
+    overflow-wrap: break-word;
+}
+#add_comment{
+    margin: 3%;
 }
 .post_details{
-    margin: 0;
+    margin: 5px;
     display: flex;
     flex-flow: row wrap;
     flex-grow: 1;
+    min-height: 0;
 }
 .poster_pfp{
     height: 50px;
@@ -59,31 +66,44 @@ p{
 
 .poster_name{
     flex: 1;
+    max-height: 100%;
 }
 .poster_name{
     flex: 1;
+    max-height: 100%;
 }
 .post_name{
     flex: 2;
+    max-height: 100%;
 }
-
+.comment{
+    margin: 10px;
+    padding: 6px
+}
 .post_content{
     border: 1px solid rgba(57, 84, 128, 0.82);
     display: flex;
     flex-flow: column;
     min-height: 0;
 }
-
+.comment_pfp{
+    height: 40px;
+    width: 40px;
+    border: 2px solid #6CA3F7;
+    border-radius: 15px;
+}
 .post_image_container {
     min-height: 0;
     flex-grow: 1;
     max-height: 100%;
     max-width: 100%;
 }
-/* fixed up to here */
+#comment_text{
+    width: 100%;
+}
 .post_image{
+    max-height: 40vh;
     max-width: 100%;
-    max-height: 100%;
 }
 .post_desc{
 
@@ -122,4 +142,55 @@ button{
     cursor: pointer;
     overflow: hidden;
     outline: none;
+}
+#form_container{
+    display: flex;
+    height: auto;
+    flex-flow: column wrap;
+    font-size: 1em;
+    width: 100%;
+}
+
+input:hover, input:focus textarea:hover, textarea:focus {
+    opacity: 100%;
+    background-color: white;
+    width: 35%;
+    color: black;
+}
+
+input, textarea{
+    background-color: rgb(0, 0, 0);
+    width: 30%;
+    opacity: 50%;
+    font-size: 1em;
+    margin: 0.5%;
+    border: solid black 2px;
+    border-radius: 5px;
+    transition-duration: 0.8s;
+    color: white;
+}
+
+input:invalid:not(.submit), textarea:invalid{
+  border: 2px solid red;
+}
+
+input:valid:not(.submit), textarea:valid{
+  border: 2px solid green;
+}
+
+#post_type{
+    width:100%;
+    text-align: center;
+
+}
+
+.post_type_button{
+    display: inline-block;
+    transition-duration: 0.4s;
+    padding: 15px 32px;
+}
+
+.post_type_button:hover {
+  background-color: rgba(108, 163, 247, 1) !important; /* Green */
+  color: white !important;
 }

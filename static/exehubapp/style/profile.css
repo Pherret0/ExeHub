@@ -1,0 +1,63 @@
+body{
+    min-height: content-box;
+}
+
+#content{
+
+}
+#profile{
+    display: flex;
+    flex-flow: column wrap;
+}
+
+#welcome{
+    width: 100%;
+}
+#logout_profile{
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 3;
+    min-width: 100%;
+}
+#groups_container{
+    display: flex;
+    flex-flow: column wrap;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+#profile_pic_container{
+    display: flex;
+    flex-flow: column wrap;
+    max-width: 50%;
+    flex-grow: 1;
+}
+#change_email_password{
+    display: flex;
+    flex-flow: column wrap;
+    flex-grow: 1;
+}
+#change_email_container{
+    display: flex;
+    flex-flow: column wrap;
+    flex-grow: 1;
+    margin: 20px;
+}
+#change_password_container{
+    display: flex;
+    flex-flow: column wrap;
+    flex-grow: 1;
+    margin: 20px;
+}
+#logout_container{
+    flex-grow: 1;
+}
+#delete_container{
+    width: 100%;
+}
+table{
+    border: none;
+    border-collapse: collapse;
+}
+tr{
+    border: none;
+}

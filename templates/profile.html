@@ -5,70 +5,90 @@
 {% block links %}
     <script type="text/javascript" src="{% static 'exehubapp/javascript/profile.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/form.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'exehubapp/style/profile.css' %}">
 {% endblock %}
 
 {% block title %} My Profile {% endblock %}
 
 {% block content %}
-    <div>
+<div id="profile">
+    <div id="welcome">
         <h1>Profile</h1>
         <p>Hello {{ user.name }}!</p>
+    </div>
+    <div id="groups_container">
+            <h1>Your groups:</h1>
 
-        <h1>Your groups:</h1>
-        <p>You are a member of the following groups on ExeHub</p>
-
-        {%  if not groups %}
-            <p>You are not in any groups. Either join an existing group or make your own!</p>
-        {% else %}
-            <table style="display:table";>
-                <tr>
-                    <th>Group Name</th>
-                    <th>Group Email Address</th>
-                    <th>Fee</th>
-                </tr>
-                {% for row in groups %}
+            {%  if not groups %}
+                <p>You are not in any groups. Either join an existing group or make your own!</p>
+            {% else %}
+                <table id="groups_table">
                     <tr>
-                        <th> {{ row.0 }}</th>
-                        <th> {{ row.2 }}</th>
-                        <th> {{ row.1 }}</th>
-                   </tr>
-                {% endfor %}
-             </table>
-        {% endif %}
-    <h1>Select profile picture</h1>
-        <div id="form_container">
-        <form method="post" enctype="multipart/form-data">
-
-                {{ form.image }}
-                <br>
-                <input type="submit" id="submit" name="uploadProfilePic" value="Upload">
-
-                <br><br><br>
-        </form>
+                        <th>Group Name</th>
+                        <th>Group Email Address</th>
+                        <th>Fee</th>
+                    </tr>
+                    {% for row in groups %}
+                        <tr>
+                            <th> {{ row.0 }}</th>
+                            <th> {{ row.2 }}</th>
+                            <th> {{ row.1 }}</th>
+                       </tr>
+                    {% endfor %}
+                 </table>
+            {% endif %}
         </div>
+    <div id="logout_profile">
+         <div id="logout_container">
+            <h1>Logout:</h1>
+            <form method="post" action="">
+                <input type="submit" id="button" name="logout" value="logout">
+            </form>
+        </div>
+        <div id="profile_pic_container">
+        <h1>Select profile picture</h1>
+            <div id="form_container">
+            <form method="post" enctype="multipart/form-data">
+
+                    {{ form.image }}
+                    <br>
+                    <input type="submit" id="submit" name="uploadProfilePic" value="Upload">
+
+                    <br><br><br>
+            </form>
+            </div>
+        </div>
+    </div>
+    <div id="change_email_password">
+        <div id="change_email_container">
         <h1>Change Email:</h1>
-        <form name="update_email" id="update_email" method="post" action="">
-            <label for="email">New Email *</label><br>
-            <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onfocusout="verifyUniqueEmail()" required><br>
-            <p id ="duplicate_user" style="display:none">Email address already registered</p>
-            <label for="password">Password *</label><br>
-            <input type="password" id="password" name="password" required>
-            <input type="hidden" id="user_id" name="user_id" value=1><br>
-            <input type="submit" value="Submit" name="submit" id="submit">
-        </form>
+            <form name="update_email" id="update_email" method="post" action="">
+                <label for="email">New Email *</label><br>
+                <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onfocusout="verifyUniqueEmail()" required><br>
+                <p id ="duplicate_user" style="display:none">Email address already registered</p>
+                <label for="password">Password *</label><br>
+                <input type="password" id="password" name="password" required>
+                <input type="hidden" id="user_id" name="user_id" value=1><br>
+                <input type="submit" value="Submit" name="submit" id="submit">
+            </form>
+        </div>
 
-        <h1>Change Password:</h1>
-        <form name="update_password" id="update_password" method="post" action="">
-            <label for="current_password">Current Password *</label><br>
-            <input type="password" id="current_password" name="current_password" required>
-            <br>
-            <label for="new_password">New Password *</label><br>
-            <input type="password" id="new_password" name="new_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
-            <button type="button" id="button">Help</button>
-            <input type="hidden" id="user_id" name="user_id" value=1><br>
-            <input type="submit" value="Submit" name="submit" id="submit_pass">
-        </form>
+        <div id="change_password_container">
+            <h1>Change Password:</h1>
+            <form name="update_password" id="update_password" method="post" action="">
+                <label for="current_password">Current Password *</label><br>
+                <input type="password" id="current_password" name="current_password" required>
+                <br>
+                <label for="new_password">New Password *</label><br>
+                <input type="password" id="new_password" name="new_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                <button type="button" id="button">Help</button>
+                <input type="hidden" id="user_id" name="user_id" value=1><br>
+                <input type="submit" value="Submit" name="submit" id="submit_pass">
+            </form>
+        </div>
+    </div>
 
+    <div id="delete_container">
         <h1>Logout:</h1>
         <form method="post" action="">
             <input type="submit" id="button" name="logout" value="Logout">
@@ -82,16 +102,14 @@
             <input type="hidden" id="user_id" name="user_id" value=1><br>
             <input type="submit" value="Delete" name="delete" id="submit_delete">
         </form>
-        <br><br><br>
-
-        <div id="popup" class="popup">
-          <div class="popup-content">
-            <span class="close">&times;</span>
-            <p>Password must contain at least one number and one uppercase and
-                lowercase letter, and at least 8 or more characters</p>
-          </div>
-        </div>
-
     </div>
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <span class="close">&times;</span>
+        <p>Password must contain at least one number and one uppercase and
+            lowercase letter, and at least 8 or more characters</p>
+      </div>
+    </div>
+</div>
 
  {% endblock %}

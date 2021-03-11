@@ -23,7 +23,7 @@ def index(request):
     except:
         # If the user is not logged in, get posts in the public general community
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM posts WHERE group_id=1")
+            cursor.execute("SELECT * FROM posts WHERE group_id=1 AND type!= 'reply'")
             data = dictfetchall(cursor)
             data = formatPosts(data)
 
@@ -41,7 +41,7 @@ def index(request):
         # If filter not selected, display all users community posts
         if group_name=="query_all_groups":
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM posts")
+                cursor.execute("SELECT * FROM posts WHERE type!= 'reply'")
                 data = dictfetchall(cursor)
         else:
             # If user selects to filter, filter based on the community selected.
@@ -52,7 +52,7 @@ def index(request):
 
             # Get the posts from the selected group
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM posts WHERE group_id=%s", (str(group_id),))
+                cursor.execute("SELECT * FROM posts WHERE group_id=%s AND type!= 'reply'", (str(group_id),))
                 data = dictfetchall(cursor)  # putting it int a dict
     else:
         # If no filter selected display all posts from communities user is in
@@ -66,7 +66,7 @@ def index(request):
                 group_list.append(i[0])
 
             # Get all the posts from the database
-            cursor.execute("SELECT * FROM posts")
+            cursor.execute("SELECT * FROM posts WHERE type!= 'reply'")
             data = dictfetchall(cursor)
 
         # Filter posts based on which ones belong to communities user is in.
@@ -402,7 +402,7 @@ def viewAchs(request):
         user_id = request.session['user_id']
     except:
         return render(request, 'login.html')
-    
+
     # Get the user ID
     user_id = request.session['user_id']
     user = Users.objects.get(user_id=user_id)

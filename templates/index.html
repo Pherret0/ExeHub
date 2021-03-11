@@ -10,6 +10,18 @@
 {% block title %} Welcome to ExeHub {% endblock %}
 
 {% block content %}
+    <div id="filter_bar">
+        <form method="POST">
+        <br><br>
+            <select id="group_select" name="group_select">
+                <option value="query_all_groups">All</option>
+                {% for row in groups %}
+                    <option value ="{{ row }}">{{ row }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Filter" name="filter" id="filter">
+        </form>
+    </div>
     <div id="feed">
         {%if not data%}
 
@@ -74,20 +86,6 @@
                     </div>
                 </div>
             {% endfor %}
-            </div>
-
-
-            <div id="filter_bar">
-                <form method="POST">
-                <br><br>
-                    <select id="group_select" name="group_select">
-                        <option value="query_all_groups">All</option>
-                        {% for row in groups %}
-                            <option value ="{{ row }}">{{ row }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="submit" value="Filter" name="filter" id="filter">
-                </form>
             </div>
         {% endif %}
 {% endblock %}
