@@ -80,6 +80,17 @@ def index(request):
     # Gather context data to display on template page
     data = formatPosts(data)
     groups = UniGroups.objects.all()
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM members WHERE user_id=%s", (user_id,))
+        data = cursor.fetchall()
+
+    # Get the community IDs and store in list
+    group_list = []
+    for i in data:
+        group_list.append(i[2])
+
+    groups = UniGroups.objects.filter(group_id__in=group_list)
     pic_url = getProfile(request)
     user_id = request.session['user_id']
     context = {
